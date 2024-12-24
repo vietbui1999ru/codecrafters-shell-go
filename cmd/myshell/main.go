@@ -17,6 +17,7 @@ func init() {
   commands = make(map[string]func(string)) 
   commands["exit"] = exitCommand
   commands["echo"] = echoCommand
+  commands["type"] = typeCommand
 }
 
 func checkCommand(command string, args string) {
@@ -39,6 +40,15 @@ func exitCommand(args string) {
 func echoCommand(args string) {
   fmt.Printf("%s\n", args)
 }
+
+func typeCommand(args string) {
+  if _, ok := commands[args]; ok {
+      fmt.Printf("%s is a shell builtin\n", args)
+    } else {
+      fmt.Printf("%s : not found\n", args)
+    }
+}
+
 func main() {
   for {
     fmt.Fprint(os.Stdout, "$ ")
