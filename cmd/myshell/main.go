@@ -40,7 +40,8 @@ func main() {
 
     // Wait for user input
     input, err := bufio.NewReader(os.Stdin).ReadString('\n')
-    // fmt.Printf("%s: command not found\n", strings.TrimSpace(input))
+    fmt.Printf("%s: command not found\n", strings.TrimSpace(input))
+    
     if err != nil {
       fmt.Printf("%s: invalid input\n", input)
     }
