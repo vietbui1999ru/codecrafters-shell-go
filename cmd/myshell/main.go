@@ -16,6 +16,7 @@ var commands map[string]func(string)
 func init() {
   commands = make(map[string]func(string)) 
   commands["exit"] = exitCommand
+  commands["echo"] = echoCommand
 }
 
 func checkCommand(command string, args string) {
@@ -33,6 +34,10 @@ func exitCommand(args string) {
     return
   }
   os.Exit(number)
+}
+
+func echoCommand(args string) {
+  fmt.Printf("%s\n", args)
 }
 func main() {
   for {
