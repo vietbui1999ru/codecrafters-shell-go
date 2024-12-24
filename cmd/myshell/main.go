@@ -45,7 +45,7 @@ func typeCommand(args string) {
   if _, ok := commands[args]; ok {
       fmt.Printf("%s is a shell builtin\n", args)
     } else {
-      fmt.Printf("%s : not found\n", args)
+      fmt.Printf("%s: not found\n", args)
     }
 }
 
