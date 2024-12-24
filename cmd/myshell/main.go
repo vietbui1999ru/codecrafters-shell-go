@@ -22,7 +22,7 @@ func checkCommand(command string, args string) {
   if cmd, ok := commands[command]; ok {
     cmd(args) // execute the command
   } else {
-    fmt.Printf("%s: not found\n", command)
+    fmt.Printf("%s: command not found\n", command)
   }
 }
 
