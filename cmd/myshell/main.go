@@ -21,6 +21,8 @@ func init() {
   commands["echo"] = echoCommand
   commands["type"] = typeCommand
   commands["pwd"] = pwdCommand
+  command["cd"] = cdCommand
+  commands["~"] = homeCommand
 }
 
 func checkCommand(command string, args string) {
@@ -75,8 +77,25 @@ func pwdCommand(_ string) {
   dir, err := os.Getwd()
   if err != nil {
     fmt.Printf("Error getting current directory: %s\n", err)
-  } else {
+    return
+  }
   fmt.Printf("%s\n", dir)
+}
+
+func homeCommand(_ string) {
+  homeDir, err := os.UserHomeDir()
+  if err != nil {
+    fmt.Printf("Error retrieving home dir : %s", err)
+    return
+  }
+  fmt.Printf("%s\n", homeDir)
+}
+
+func cdCommand(args string) {
+  // abs path
+  err := os.Chdir(args)
+  if err != nil {
+    fmt.Printf("cd: %s: No such file or directory\n", err)
   }
 }
 
