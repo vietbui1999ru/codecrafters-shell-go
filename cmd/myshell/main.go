@@ -44,9 +44,19 @@ func echoCommand(args string) {
 func typeCommand(args string) {
   if _, ok := commands[args]; ok {
       fmt.Printf("%s is a shell builtin\n", args)
-    } else {
-      fmt.Printf("%s: not found\n", args)
+      return
+  } else {
+
+    paths := os.Getenv("PATH")
+    pathList := strings.Split(paths, ":")
+    for _, path := range pathList {
+      if _, err := os.Stat(path + "/" + args); err == nil {
+        fmt.Printf("%s is %s/%s\n", args, path, args)
+      }
     }
+
+  }
+  fmt.Printf("%s: not found\n", args)
 }
 
 func main() {
