@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"strconv"
 	"strings"
-  "strconv"
 )
 
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
@@ -23,6 +25,17 @@ func init() {
 func checkCommand(command string, args string) {
   if cmd, ok := commands[command]; ok {
     cmd(args) // execute the command
+  } else if _, err := os.Stat(command); err == nil {
+    cmd := exec.Command(command)
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+    err := cmd.Run()
+    if err != nil {
+      fmt.Printf("Error: %s\n", err)
+      return
+    }
+    fmt.Printf("%s\n", cmd.Stdout)
+
   } else {
     fmt.Printf("%s: command not found\n", command)
   }
@@ -50,7 +63,7 @@ func typeCommand(args string) {
     paths := os.Getenv("PATH")
     pathList := strings.Split(paths, ":")
     for _, path := range pathList {
-      if _, err := os.Stat(path + "/" + args); err == nil {
+      if _, err := os.Stat(filepath.Join(path, args)); err == nil {
         fmt.Printf("%s is %s/%s\n", args, path, args)
         return
       }
