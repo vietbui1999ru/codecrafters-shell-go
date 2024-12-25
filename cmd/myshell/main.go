@@ -52,6 +52,7 @@ func typeCommand(args string) {
     for _, path := range pathList {
       if _, err := os.Stat(path + "/" + args); err == nil {
         fmt.Printf("%s is %s/%s\n", args, path, args)
+        return
       }
     }
 
