@@ -20,6 +20,7 @@ func init() {
   commands["exit"] = exitCommand
   commands["echo"] = echoCommand
   commands["type"] = typeCommand
+  commands["pwd"] = pwdCommand
 }
 
 func checkCommand(command string, args string) {
@@ -68,6 +69,15 @@ func typeCommand(args string) {
 
   }
   fmt.Printf("%s: not found\n", args)
+}
+
+func pwdCommand(_ string) {
+  dir, err := os.Getwd()
+  if err != nil {
+    fmt.Printf("Error getting current directory: %s\n", err)
+  } else {
+  fmt.Printf("%s\n", dir)
+  }
 }
 
 func main() {
