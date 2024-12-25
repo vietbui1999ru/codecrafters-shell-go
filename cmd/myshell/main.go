@@ -93,13 +93,14 @@ func homeCommand(_ string) {
 
 func cdCommand(args string) {
   // abs path
+  var cmd string
   if args == "~" {
-    _, err := os.UserHomeDir()
-    if err != nil {
-      fmt.Fprintf(os.Stdout, "Some kind of error: %s\n", err)
-    }
-  } else if err := os.Chdir(args); err != nil {
-    fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
+    cmd, _ = os.UserHomeDir()
+  } else {
+    cmd = args
+  }
+  if err := os.Chdir(cmd); err != nil {
+  fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
   }
 }
 
