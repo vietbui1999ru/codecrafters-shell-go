@@ -25,20 +25,18 @@ func init() {
 func checkCommand(command string, args string) {
   if cmd, ok := commands[command]; ok {
     cmd(args) // execute the command
-  } else if _, err := os.Stat(command); err == nil {
-    cmd := exec.Command(command)
+    return
+  } else {
+    cmd := exec.Command(command, args)
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
     err := cmd.Run()
     if err != nil {
-      fmt.Printf("Error: %s\n", err)
+      fmt.Printf("%s: command not found\n", command)
       return
     }
-    fmt.Printf("%s\n", cmd.Stdout)
-
-  } else {
-    fmt.Printf("%s: command not found\n", command)
   }
+  fmt.Printf("%s: command not found\n", command)
 }
 
 func exitCommand(args string) {
