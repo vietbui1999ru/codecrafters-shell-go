@@ -21,7 +21,7 @@ func init() {
   commands["echo"] = echoCommand
   commands["type"] = typeCommand
   commands["pwd"] = pwdCommand
-  command["cd"] = cdCommand
+  commands["cd"] = cdCommand
   commands["~"] = homeCommand
 }
 
