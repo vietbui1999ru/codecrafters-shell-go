@@ -95,7 +95,7 @@ func cdCommand(args string) {
   // abs path
   err := os.Chdir(args)
   if err != nil {
-    fmt.Printf("cd: %s: No such file or directory\n", err)
+    fmt.Printf("cd: %s: No such file or directory\n", args)
   }
 }
 
