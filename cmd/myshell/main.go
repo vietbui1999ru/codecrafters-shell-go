@@ -36,7 +36,6 @@ func checkCommand(command string, args string) {
       return
     }
   }
-  fmt.Printf("%s: command not found\n", command)
 }
 
 func exitCommand(args string) {
