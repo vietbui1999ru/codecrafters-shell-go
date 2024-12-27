@@ -55,9 +55,11 @@ func exitCommand(args string) {
 
 func echoCommand(args string) {
   if strings.HasPrefix(args, singleQuotes) && strings.HasSuffix(args, singleQuotes) {
-  fmt.Printf("%s\n", trimCoupledQuotes(args))
+    fmt.Printf("%s\n", trimCoupledQuotes(args))
+  } else if strings.HasPrefix(args, doubleQuotes) && strings.HasSuffix(args, doubleQuotes) {
+    fmt.Printf("%s\n", trimCoupledQuotes(args))
   } else {
-    fmt.Printf("%s\n", strings.Trim(args, " "))
+    fmt.Printf("%s\n", strings.TrimSpace(args))
   }
 }
 
@@ -71,6 +73,7 @@ func trimCoupledQuotes(s string) string {
     s = strings.TrimPrefix(s, doubleQuotes)
   }
 
+  fmt.Println("we callin here?")
   return s
 }
 
