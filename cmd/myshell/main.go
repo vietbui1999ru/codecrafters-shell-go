@@ -13,6 +13,9 @@ import (
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
 var _ = fmt.Fprint
 
+var singleQuotes = "'"
+var doubleQuotes = `"`
+
 var commands map[string]func(string)
 
 func init() {
@@ -51,7 +54,20 @@ func exitCommand(args string) {
 }
 
 func echoCommand(args string) {
-  fmt.Printf("%s\n", args)
+  fmt.Printf("%s\n", trimCoupledQuotes(args))
+}
+
+func trimCoupledQuotes(s string) string {
+  if strings.HasSuffix(s, singleQuotes) && strings.HasPrefix(s, singleQuotes) {
+    s = strings.TrimSuffix(s, singleQuotes)
+    s = strings.TrimPrefix(s, singleQuotes)
+  }
+  if strings.HasSuffix(s, doubleQuotes) && strings.HasPrefix(s, doubleQuotes) {
+    s = strings.TrimSuffix(s, doubleQuotes)
+    s = strings.TrimPrefix(s, doubleQuotes)
+  }
+
+  return s
 }
 
 func typeCommand(args string) {
