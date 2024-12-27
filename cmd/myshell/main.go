@@ -57,7 +57,7 @@ func echoCommand(args string) {
   if strings.HasPrefix(args, singleQuotes) && strings.HasSuffix(args, singleQuotes) {
   fmt.Printf("%s\n", trimCoupledQuotes(args))
   } else {
-    fmt.Printf("%s\n", args)
+    fmt.Printf("%s\n", strings.TrimSpace(args))
   }
 }
 
