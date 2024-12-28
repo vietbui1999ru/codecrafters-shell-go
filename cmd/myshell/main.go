@@ -33,13 +33,15 @@ func checkCommand(command string, args string) {
     cmd(args) // execute the command
     return
   } else {
-    cmd := exec.Command(command, args)
-    cmd.Stdout = os.Stdout
-    cmd.Stderr = os.Stderr
-    err := cmd.Run()
-    if err != nil {
-      fmt.Printf("%s: command not found\n", command)
-      return
+    for _, arg := range strings.Fields(args) {
+      cmd := exec.Command(command, arg)
+      cmd.Stdout = os.Stdout
+      cmd.Stderr = os.Stderr
+      err := cmd.Run()
+      if err != nil {
+        fmt.Printf("%s: command not found\n", command)
+        return
+      }
     }
   }
 }
