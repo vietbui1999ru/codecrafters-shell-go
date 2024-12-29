@@ -51,34 +51,27 @@ func checkCommand(command string, args string) {
 }
 
 func trimFieldByQuotes(s string) []string {
-  var fields []string
-  var curField []rune
-  inQuotes := false
-  quoteType := rune(0) // single or double quotes
-
-  for _, char := range []byte(s) {
-    switch {
-      case rune(char) == rune(singleQuotes[0]) || rune(char) == rune(doubleQuotes[0]):
-        if inQuotes  && rune(char) == quoteType {
-          inQuotes = false
-          fields = append(fields, string(curField))
-          quoteType = 0 
-        } else if !inQuotes {
-          inQuotes = true
-          quoteType = 0
+    // s := `Foo bar random "letters lol" stuff`
+    a := []string{}
+    sb := &strings.Builder{}
+    quoted := false
+    for _, r := range s {
+        if r == rune(singleQuotes[0]) {
+            quoted = !quoted
+            sb.WriteRune(r) // keep '"' otherwise comment this line
+        } else if !quoted && r == ' ' {
+            a = append(a, sb.String())
+            sb.Reset()
         } else {
-          curField = append(curField, rune(char))
+            sb.WriteRune(r)
         }
-      default:
-        if inQuotes || char != ' ' {
-          curField = append(curField, rune(char))
-      }
     }
-  }
-  if len(curField) > 0 {
-    fields = append(fields, string(curField))
-  }
-  return fields
+    if sb.Len() > 0 {
+        a = append(a, sb.String())
+    }
+
+    return a
+
 }
 
 
