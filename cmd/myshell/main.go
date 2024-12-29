@@ -36,7 +36,7 @@ func checkCommand(command string, args string) {
     // fmt.Printf("args %s\n", args)
     for _, arg := range trimFieldByQuotes(args) {
       // unicode print
-      // fmt.Printf("arg: %s\n", arg)
+      fmt.Printf("arg: %s\n", arg)
       cmd := exec.Command(command, arg)
       cmd.Stdout = os.Stdout
       cmd.Stderr = os.Stderr
