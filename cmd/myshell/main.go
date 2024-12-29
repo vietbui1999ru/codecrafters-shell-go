@@ -35,9 +35,7 @@ func checkCommand(command string, args string) {
   } else {
     for _, arg := range strings.Fields(args) {
       // unicode print
-      for i, r := range arg {
-        fmt.Printf("at Index %d of %s: %U\n",i, arg, r)
-      }
+      fmt.Printf("arg: %s\n", arg)
       cmd := exec.Command(command, arg)
       cmd.Stdout = os.Stdout
       cmd.Stderr = os.Stderr
