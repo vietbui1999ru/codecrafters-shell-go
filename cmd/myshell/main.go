@@ -48,6 +48,8 @@ func checkCommand(command string, args string) {
       }
     }
   }
+  
+  fmt.Printf("%s: command not found\n", command)
 }
 
 func trimFieldByQuotes(s string) []string {
