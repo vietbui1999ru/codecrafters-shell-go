@@ -55,22 +55,22 @@ func trimFieldByQuotes(s string) []string {
   inQuotes := false
   quoteType := rune(0) // single or double quotes
 
-  for _, char := range s {
+  for _, char := range []byte(s) {
     switch {
-      case char == '\'' || char == '"':
-        if inQuotes  && char == quoteType {
+      case rune(char) == rune(singleQuotes[0]) || rune(char) == rune(doubleQuotes[0]):
+        if inQuotes  && rune(char) == quoteType {
           inQuotes = false
           fields = append(fields, string(curField))
           quoteType = 0 
         } else if !inQuotes {
           inQuotes = true
-          quoteType = char
+          quoteType = 0
         } else {
-          curField = append(curField, char)
+          curField = append(curField, rune(char))
         }
       default:
         if inQuotes || char != ' ' {
-          curField = append(curField, char)
+          curField = append(curField, rune(char))
       }
     }
   }
