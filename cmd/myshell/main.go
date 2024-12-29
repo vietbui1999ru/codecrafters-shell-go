@@ -34,6 +34,7 @@ func checkCommand(command string, args string) {
     return
   } else {
     // fmt.Printf("args %s\n", args)
+    fmt.Printf("args %s\n", trimFieldByQuotes(args))
     for _, arg := range trimFieldByQuotes(args) {
       // unicode print
       fmt.Printf("arg: %s\n", arg)
