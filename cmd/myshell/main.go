@@ -33,6 +33,7 @@ func checkCommand(command string, args string) {
     cmd(args) // execute the command
     return
   } else {
+    fmt.Println(strings.Fields(args))
     for _, arg := range strings.Fields(args) {
       cmd := exec.Command(command, arg)
       cmd.Stdout = os.Stdout
