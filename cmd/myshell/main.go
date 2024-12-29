@@ -33,8 +33,15 @@ func checkCommand(command string, args string) {
     cmd(args) // execute the command
     return
   } else {
-    // fmt.Printf("args %s\n", args)
-    // fmt.Printf("args %s\n", trimFieldByQuotes(args))
+
+    // check if the command is a system command 
+
+    _, err := exec.LookPath(command)
+    if err != nil {
+      fmt.Printf("%s: command not found\n", command)
+      return
+    }
+
     for _, arg := range trimFieldByQuotes(args) {
       // unicode print
       // fmt.Printf("arg: %s\n", arg)
@@ -48,8 +55,6 @@ func checkCommand(command string, args string) {
       }
     }
   }
-  
-  fmt.Printf("%s: command not found\n", command)
 }
 
 func trimFieldByQuotes(s string) []string {
