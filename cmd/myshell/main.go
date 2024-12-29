@@ -33,8 +33,11 @@ func checkCommand(command string, args string) {
     cmd(args) // execute the command
     return
   } else {
-    fmt.Println(strings.Fields(args))
     for _, arg := range strings.Fields(args) {
+      // unicode print
+      for i, r := range arg {
+        fmt.Printf("at Index %d of %s: %U\n",i, arg, r)
+      }
       cmd := exec.Command(command, arg)
       cmd.Stdout = os.Stdout
       cmd.Stderr = os.Stderr
@@ -149,7 +152,11 @@ func main() {
 
 // comment again
 func handleCommands(input string) {
-  cmd, args, _ := strings.Cut(input, " ")
+  cmd, args, err := strings.Cut(input, " ")
+  if !err {
+    fmt.Printf("%s: invalid input. Seperation is illegal\n", input)
+    return
+  }
   checkCommand(cmd, args)
 }
 
