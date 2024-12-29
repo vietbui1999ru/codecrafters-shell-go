@@ -34,7 +34,7 @@ func checkCommand(command string, args string) {
     return
   } else {
     fmt.Printf("args %s\n", args)
-    for _, arg := range strings.Fields(args) {
+    for _, arg := range trimFieldByQuotes(args) {
       // unicode print
       fmt.Printf("arg: %s\n", arg)
       cmd := exec.Command(command, arg)
@@ -48,6 +48,39 @@ func checkCommand(command string, args string) {
     }
   }
 }
+
+func trimFieldByQuotes(s string) []string {
+  var fields []string
+  var curField []rune
+  inQuotes := false
+  quoteType := rune(0) // single or double quotes
+
+  for _, char := range s {
+    switch {
+      case char == '\'' || char == '"':
+        if inQuotes  && char == quoteType {
+          inQuotes = false
+          fields = append(fields, string(curField))
+          quoteType = 0 
+        } else if !inQuotes {
+          inQuotes = true
+          quoteType = char
+        } else {
+          curField = append(curField, char)
+        }
+      default:
+        if inQuotes || char != ' ' {
+          curField = append(curField, char)
+      }
+    }
+  }
+  if len(curField) > 0 {
+    fields = append(fields, string(curField))
+  }
+  return fields
+}
+
+
 
 func exitCommand(args string) {
   number, err := strconv.Atoi(args)
