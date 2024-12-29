@@ -178,11 +178,7 @@ func main() {
 
 // comment again
 func handleCommands(input string) {
-  cmd, args, err := strings.Cut(input, " ")
-  if !err {
-    fmt.Printf("%s: invalid input. Seperation is illegal\n", input)
-    return
-  }
+  cmd, args, _ := strings.Cut(input, " ")
   checkCommand(cmd, args)
 }
 
