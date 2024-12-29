@@ -33,6 +33,7 @@ func checkCommand(command string, args string) {
     cmd(args) // execute the command
     return
   } else {
+    fmt.Printf("args %s\n", args)
     for _, arg := range strings.Fields(args) {
       // unicode print
       fmt.Printf("arg: %s\n", arg)
