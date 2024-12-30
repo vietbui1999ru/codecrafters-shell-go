@@ -64,31 +64,46 @@ func trimFieldByQuotes(s string) []string {
     sb := &strings.Builder{}
     quoted := false
     var quoteChar rune
-    for _, r := range s {
-        if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) || r == rune(backslash[0]) {
+    for i, r := range s {
+        if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
 
           // if field is quoted(true) and the quoteChar is the same as the current char then
           if quoted && r == quoteChar {             
             quoted = !quoted // end of quote -> false
             quoteChar = 0 // reset quoteChar
+
           // if field is not quoted and the quoteChar is not the same as the current char then
           } else if !quoted {
             quoted = true // start of quote = true
             quoteChar = r // set quoteChar to be the single/double quote
+
           // if field is quoted and the quoteChar is not the same as the current char then  
           } else {
             sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
           }
             // sb.WriteRune(r) // keep '"' otherwise comment this line
+
         // if field is not quoted and the current char is a space
         } else if !quoted && r == ' ' {
+
           // if the string builder has a length greater than 0
           if sb.Len() > 0 {
             a = append(a, sb.String())
             sb.Reset()
           }
+
        // if field is not quoted and the current char is not a space
        } else {
+          // if is not quoted and the current char is a backslash then add the next char to the string builder 
+          if !quoted && r == rune(backslash[0]) {
+            if i+1 < len(s) {
+              // sb.WriteRune(r)
+              // write the next char to the string builder, ignore the backslash
+              sb.WriteRune(rune(s[i+1]))
+            }
+            continue
+          }
+
           sb.WriteRune(r)
           // fmt.Printf("r: %v\n", r)
        }
