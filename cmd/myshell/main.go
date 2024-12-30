@@ -65,27 +65,34 @@ func trimFieldByQuotes(s string) []string {
     var quoteChar rune
     for _, r := range s {
         if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
-          if quoted && r == quoteChar {
-            quoted = !quoted
-            quoteChar = 0
-      } else if !quoted {
-        quoted = true
-        quoteChar = r
-      }
-      // } else {
-      //   sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
-      // }
+
+          // if field is quoted(true) and the quoteChar is the same as the current char then
+          if quoted && r == quoteChar {             
+            quoted = !quoted // end of quote -> false
+            quoteChar = 0 // reset quoteChar
+          // if field is not quoted and the quoteChar is not the same as the current char then
+          } else if !quoted {
+            quoted = true // start of quote = true
+            quoteChar = r // set quoteChar to be the single/double quote
+          // if field is quoted and the quoteChar is not the same as the current char then  
+          } else {
+            sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
+          }
             // sb.WriteRune(r) // keep '"' otherwise comment this line
+        // if field is not quoted and the current char is a space
         } else if !quoted && r == ' ' {
+          // if the string builder has a length greater than 0
           if sb.Len() > 0 {
             a = append(a, sb.String())
             sb.Reset()
           }
-       //  } else {
-       //      sb.WriteRune(r)
-       //  }
+       // if field is not quoted and the current char is not a space
+       } else {
+          sb.WriteRune(r)
+          // fmt.Printf("r: %v\n", r)
+       }
+        // sb.WriteRune(r)
       }
-    }
     if sb.Len() > 0 {
         a = append(a, sb.String())
     }
@@ -105,28 +112,13 @@ func exitCommand(args string) {
 }
 
 func echoCommand(args string) {
-  if strings.HasPrefix(args, singleQuotes) && strings.HasSuffix(args, singleQuotes) {
-    fmt.Printf("%s\n", trimCoupledQuotes(args))
-  } else if strings.HasPrefix(args, doubleQuotes) && strings.HasSuffix(args, doubleQuotes) {
-    fmt.Printf("%s\n", trimCoupledQuotes(args))
-  } else {
-  fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
+  // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
+  for _, arg := range trimFieldByQuotes(args) {
+    fmt.Printf("%s ", arg)
   }
+  fmt.Println()
 }
 
-func trimCoupledQuotes(s string) string {
-  if strings.HasSuffix(s, singleQuotes) && strings.HasPrefix(s, singleQuotes) {
-    s = strings.TrimSuffix(s, singleQuotes)
-    s = strings.TrimPrefix(s, singleQuotes)
-  }
-  if strings.HasSuffix(s, doubleQuotes) && strings.HasPrefix(s, doubleQuotes) {
-    s = strings.TrimSuffix(s, doubleQuotes)
-    s = strings.TrimPrefix(s, doubleQuotes)
-  }
-
-  // fmt.Println("we callin here?")
-  return s
-}
 
 func typeCommand(args string) {
   if _, ok := commands[args]; ok {
