@@ -81,9 +81,10 @@ func trimFieldByQuotes(s string) []string {
             a = append(a, sb.String())
             sb.Reset()
           }
-        } else {
-            sb.WriteRune(r)
-        }
+       //  } else {
+       //      sb.WriteRune(r)
+       //  }
+      }
     }
     if sb.Len() > 0 {
         a = append(a, sb.String())
