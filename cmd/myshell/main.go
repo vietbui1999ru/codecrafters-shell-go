@@ -102,9 +102,10 @@ func trimFieldByQuotes(s string) []string {
               sb.WriteRune(rune(s[i+1]))
             }
             continue
-          }
+          } else {
 
           sb.WriteRune(r)
+        }
           // fmt.Printf("r: %v\n", r)
        }
         // sb.WriteRune(r)
