@@ -58,64 +58,122 @@ func checkCommand(command string, args string) {
   }
 }
 
+// func trimFieldByQuotes(s string) []string {
+//     // s := `Foo bar random "letters lol" stuff`
+//     a := []string{}
+//     sb := &strings.Builder{}
+//     quoted := false
+//     var quoteChar rune
+//     for i, r := range s {
+//         // detect if we are inside a quote
+//         if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
+// 
+//           // if field is quoted(true) and the quoteChar is the same as the current char then
+//           if quoted && r == quoteChar {             
+//             quoted = !quoted // end of quote -> false
+//             quoteChar = 0 // reset quoteChar
+//             // fmt.Printf("1: %v\n", r)
+// 
+//           // if field is not quoted and the quoteChar is not the same as the current char then
+//           } else if !quoted {
+//             quoted = true // start of quote = true
+//             quoteChar = r // set quoteChar to be the single/double quote
+//             // fmt.Printf("2: %v\n", r)
+// 
+//           // if field is quoted and the quoteChar is not the same as the current char then  
+//           } else {
+//             sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
+//             // fmt.Printf("3: %v\n", r)
+//           }
+//             // sb.WriteRune(r) // keep '"' otherwise comment this line
+// 
+//         // if field is not quoted and the current char is a space
+//         } else if !quoted && r == ' ' {
+// 
+//           // if the string builder has a length greater than 0
+//           if sb.Len() > 0 {
+//             a = append(a, sb.String())
+//             sb.Reset()
+//           }
+//         //  fmt.Printf("4: %v\n", r)
+// 
+//        // if field is not quoted and the current char is not a space
+//        } else {
+//           // if is not quoted and the current char is a backslash then add the next char to the string builder, treat as normal char 
+//           if r == rune(backslash[0]) {
+//             if i+1 < len(s) {
+//               // sb.WriteRune(r)
+//               // write the next char to the string builder, ignore the backslash
+//               sb.WriteRune(rune(s[i+1]))
+//               // fmt.Printf("5: %v\n", r)
+//               continue
+//             }
+//           // if the current char is not a backslash then add the current char to the string builder
+//           // fmt.Printf("6: %v\n", r)
+//         }
+//           // fmt.Printf("r: %v\n", r)
+//        }
+//         // sb.WriteRune(r)
+//       }
+//     if sb.Len() > 0 {
+//         a = append(a, sb.String())
+//     }
+// 
+//     return a
+// }
+
 func trimFieldByQuotes(s string) []string {
-    // s := `Foo bar random "letters lol" stuff`
     a := []string{}
     sb := &strings.Builder{}
     quoted := false
     var quoteChar rune
-    for i, r := range s {
+    // escaping := false
+    for i := 0; i < len(s); i++ {
+        // Handle quotes
+        r := rune(s[i])
         if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
-
-          // if field is quoted(true) and the quoteChar is the same as the current char then
-          if quoted && r == quoteChar {             
-            quoted = !quoted // end of quote -> false
-            quoteChar = 0 // reset quoteChar
-
-          // if field is not quoted and the quoteChar is not the same as the current char then
-          } else if !quoted {
-            quoted = true // start of quote = true
-            quoteChar = r // set quoteChar to be the single/double quote
-
-          // if field is quoted and the quoteChar is not the same as the current char then  
-          } else {
-            sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
-          }
-            // sb.WriteRune(r) // keep '"' otherwise comment this line
-
-        // if field is not quoted and the current char is a space
-        } else if !quoted && r == ' ' {
-
-          // if the string builder has a length greater than 0
-          if sb.Len() > 0 {
-            a = append(a, sb.String())
-            sb.Reset()
-          }
-
-       // if field is not quoted and the current char is not a space
-       } else {
-          // if is not quoted and the current char is a backslash then add the next char to the string builder 
-          if !quoted && r == rune(backslash[0]) {
-            if i+1 < len(s) {
-              // sb.WriteRune(r)
-              // write the next char to the string builder, ignore the backslash
-              sb.WriteRune(rune(s[i+1]))
+            if quoted && r == quoteChar {
+                // End of quoted field
+                quoted = false
+                quoteChar = 0
+            } else if !quoted {
+                // Start of quoted field
+                quoted = true
+                quoteChar = r
+            } else {
+                // Mismatched quote inside a quoted field, treat as normal
+                sb.WriteRune(r)
             }
             continue
-          } else {
-
-          sb.WriteRune(r)
         }
-          // fmt.Printf("r: %v\n", r)
-       }
-        // sb.WriteRune(r)
-      }
+
+        // Handle spaces outside quoted fields
+        if !quoted && r == ' ' {
+            if sb.Len() > 0 {
+                a = append(a, sb.String())
+                sb.Reset()
+            }
+            continue
+        }
+        if !quoted && r == rune(backslash[0]) {
+            // Skip the backslash outside of quotes
+            if i+1 < len(s) {
+              i++
+              sb.WriteRune(rune(s[i]))
+            }
+            continue
+        }
+      sb.WriteRune(r)
+    }
+
+    // Add the last field if there's any
     if sb.Len() > 0 {
         a = append(a, sb.String())
     }
 
     return a
 }
+
 
 
 
