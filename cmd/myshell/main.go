@@ -71,9 +71,10 @@ func trimFieldByQuotes(s string) []string {
       } else if !quoted {
         quoted = true
         quoteChar = r
-      } else {
-        sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
       }
+      // } else {
+      //   sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
+      // }
             // sb.WriteRune(r) // keep '"' otherwise comment this line
         } else if !quoted && r == ' ' {
           if sb.Len() > 0 {
