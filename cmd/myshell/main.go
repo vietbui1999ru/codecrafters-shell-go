@@ -62,23 +62,33 @@ func trimFieldByQuotes(s string) []string {
     a := []string{}
     sb := &strings.Builder{}
     quoted := false
+    var quoteChar rune
     for _, r := range s {
         if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
+          if quoted && r == quoteChar {
             quoted = !quoted
+            quoteChar = 0
+      } else if !quoted {
+        quoted = true
+        quoteChar = r
+      } else {
+        sb.WriteRune(r) //mismatch quote inside quote field, treat as normal char
+      }
             // sb.WriteRune(r) // keep '"' otherwise comment this line
         } else if !quoted && r == ' ' {
+          if sb.Len() > 0 {
             a = append(a, sb.String())
             sb.Reset()
-        // } else {
-        //     sb.WriteRune(r)
-        // }
+          }
+        } else {
+            sb.WriteRune(r)
+        }
     }
     if sb.Len() > 0 {
         a = append(a, sb.String())
     }
 
     return a
-
 }
 
 
