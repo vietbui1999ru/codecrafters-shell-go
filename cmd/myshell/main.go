@@ -63,7 +63,7 @@ func trimFieldByQuotes(s string) []string {
     sb := &strings.Builder{}
     quoted := false
     for _, r := range s {
-        if r == rune(singleQuotes[0]) {
+        if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
             quoted = !quoted
             // sb.WriteRune(r) // keep '"' otherwise comment this line
         } else if !quoted && r == ' ' {
