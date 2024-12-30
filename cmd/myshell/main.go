@@ -15,6 +15,7 @@ var _ = fmt.Fprint
 
 var singleQuotes = "'"
 var doubleQuotes = `"`
+var backslash = `\`
 
 var commands map[string]func(string)
 
@@ -64,7 +65,7 @@ func trimFieldByQuotes(s string) []string {
     quoted := false
     var quoteChar rune
     for _, r := range s {
-        if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) {
+        if r == rune(singleQuotes[0]) || r == rune(doubleQuotes[0]) || r == rune(backslash[0]) {
 
           // if field is quoted(true) and the quoteChar is the same as the current char then
           if quoted && r == quoteChar {             
