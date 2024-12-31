@@ -33,9 +33,9 @@ func init() {
   commands["~"] = homeCommand
 }
 
-func checkCommand(command string, args string) {
+func checkCommand(command string, args []string) {
   if cmd, ok := commands[command]; ok {
-    cmd(args) // execute the command
+    cmd(args[0]) // execute the command
     return
   } else {
 
@@ -47,7 +47,7 @@ func checkCommand(command string, args string) {
       return
     }
 
-    for _, arg := range trimFieldByQuotes(args) {
+    for _, arg := range args {
       // unicode print
       // fmt.Printf("arg: %s\n", arg)
       cmd := exec.Command(command, arg)
@@ -227,7 +227,7 @@ func handleCommands(input string) {
   parsedInput := trimFieldByQuotes(input)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   cmd := parsedInput[0]
-  args := strings.Join(parsedInput[1:], " ")
+  args := parsedInput[1:]
   checkCommand(cmd, args)
   // test
 }
