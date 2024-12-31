@@ -226,5 +226,6 @@ func main() {
 func handleCommands(input string) {
   cmd, args, _ := strings.Cut(input, space)
   checkCommand(cmd, args)
+  // test
 }
 
