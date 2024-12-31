@@ -90,12 +90,12 @@ func trimFieldByQuotes(s string) []string {
           if quoted && quoteChar == '"' {
             if i+1 < len(s) {
               nextChar := rune(s[i+1])
-              fmt.Printf("debug 1")
+              // fmt.Printf("debug 1\n")
               if nextChar == rune(dollar[0]) || nextChar == rune(backslash[0]) || nextChar == rune(doubleQuotes[0]) || nextChar == rune(newline[0]) {
                 i++
           
                 sb.WriteRune(nextChar)
-                fmt.Printf("debug 2")
+                // fmt.Printf("debug 2\n")
                 continue
               }
             }
@@ -104,7 +104,7 @@ func trimFieldByQuotes(s string) []string {
             if i+1 < len(s) {
               i++
               sb.WriteRune(rune(s[i]))
-              fmt.Printf("debug 3")
+              // fmt.Printf("debug 3\n")
             }
             continue
           }
@@ -117,7 +117,7 @@ func trimFieldByQuotes(s string) []string {
                 sb.Reset()
             }
               
-            fmt.Printf("debug 4")
+            // fmt.Printf("debug 4\n")
             continue
         }
         if !quoted && r == rune(backslash[0]) {
