@@ -224,7 +224,10 @@ func main() {
 
 // comment again
 func handleCommands(input string) {
-  cmd, args, _ := strings.Cut(input, space)
+  parsedInput := trimFieldByQuotes(input)
+  fmt.Printf("parsedInput: %s\n", parsedInput)
+  cmd := parsedInput[0]
+  args := strings.Join(parsedInput[1:], " ")
   checkCommand(cmd, args)
   // test
 }
