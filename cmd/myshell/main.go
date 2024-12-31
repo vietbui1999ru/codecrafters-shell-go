@@ -147,7 +147,7 @@ func exitCommand(args string) {
 }
 
 func echoCommand(args string) {
-  // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
+  fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
   fmt.Printf("%s\n", args)
   for _, arg := range trimFieldByQuotes(args) {
     fmt.Printf("%s ", arg)
