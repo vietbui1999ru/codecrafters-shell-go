@@ -146,9 +146,9 @@ func exitCommand(args string) {
   os.Exit(number)
 }
 
-func echoCommand(args string) {
+func echoCommand(args []string) {
   // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
-  for _, arg := range trimFieldByQuotes(args) {
+  for _, arg := range args {
     fmt.Printf("%s ", arg)
   }
   fmt.Println()
