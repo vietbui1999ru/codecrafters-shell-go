@@ -15,16 +15,16 @@ var _ = fmt.Fprint
 
 var singleQuotes = "'"
 var doubleQuotes = `"`
-var backslash = `\`
+var backslash = `\\`
 var dollar = `$`
 var newline = `\n`
 var space = ` `
 var tilde = `~`
 
-var commands map[string]func([]string)
+var commands map[string]func(string)
 
 func init() {
-  commands = make(map[string]func([]string)) 
+  commands = make(map[string]func(string)) 
   commands["exit"] = exitCommand
   commands["echo"] = echoCommand
   commands["type"] = typeCommand
@@ -33,7 +33,7 @@ func init() {
   commands["~"] = homeCommand
 }
 
-func checkCommand(command string, args []string) {
+func checkCommand(command string, args string) {
   // fmt.Printf("command: %s\n", command)
   // fmt.Printf("args: %s\n", args)
   if cmd, ok := commands[command]; ok {
@@ -53,7 +53,7 @@ func checkCommand(command string, args []string) {
     for _, arg := range args {
       // unicode print
       // fmt.Printf("arg: %s\n", arg)
-      cmd := exec.Command(command, arg)
+      cmd := exec.Command(command, string(arg))
       cmd.Stdout = os.Stdout
       cmd.Stderr = os.Stderr
       err := cmd.Run()
@@ -65,39 +65,39 @@ func checkCommand(command string, args []string) {
   }
 }
 
-func trimFieldByQuotes(s []string) []string {
+func trimFieldByQuotes(s string) []string {
     a := []string{}
     sb := &strings.Builder{}
     quoted := false
-    var quoteChar string
+    var quoteChar byte 
     // escaping := false
     for i := 0; i < len(s); i++ {
         // Handle quotes
         r := s[i]
-        if r == string(singleQuotes[0]) || r == string(doubleQuotes[0]) {
-            if quoted && r == string(quoteChar) {
+        if r == singleQuotes[0] || r == doubleQuotes[0] {
+            if quoted && r == quoteChar {
                 // End of quoted field
                 quoted = false
-                quoteChar = ""
+                quoteChar = 0
             } else if !quoted {
                 // Start of quoted field
                 quoted = true
                 quoteChar = r
             } else {
-                  sb.WriteString(r)
+                  sb.WriteByte(r)
                 }
                 
             continue
         }
-        if r == string(backslash[0]) {
-          if quoted && quoteChar == string(doubleQuotes[0]) {
+        if r == backslash[0] {
+          if quoted && quoteChar == doubleQuotes[0] {
             if i+1 < len(s) {
               nextChar := s[i+1]
               // fmt.Printf("debug 1\n")
-              if nextChar == string(dollar[0]) || nextChar == string(backslash[0]) || nextChar == string(doubleQuotes[0]) || nextChar == string(newline[0]) {
+              if nextChar == dollar[0] || nextChar == backslash[0] || nextChar == doubleQuotes[0] || nextChar == newline[0] {
                 i++
           
-                sb.WriteString(nextChar)
+                sb.WriteByte(nextChar)
                 // fmt.Printf("debug 2\n")
                 continue
               }
@@ -106,7 +106,7 @@ func trimFieldByQuotes(s []string) []string {
           // Skip the backslash outside of quotes
             if i+1 < len(s) {
               i++
-              sb.WriteString(s[i])
+              sb.WriteByte(s[i])
               // fmt.Printf("debug 3\n")
             }
             continue
@@ -114,7 +114,7 @@ func trimFieldByQuotes(s []string) []string {
         } 
 
         // Handle spaces outside quoted fields
-        if !quoted && r == string(space[0]) {
+        if !quoted && r == space[0] {
             if sb.Len() > 0 {
                 a = append(a, sb.String())
                 sb.Reset()
@@ -123,15 +123,15 @@ func trimFieldByQuotes(s []string) []string {
             // fmt.Printf("debug 4 %v\n", string(r))
             continue
         }
-        if !quoted && r == string(backslash[0]) {
+        if !quoted && r == backslash[0] {
             // Skip the backslash outside of quotes
             if i+1 < len(s) {
               i++
-              sb.WriteString(r)
+              sb.WriteByte(r)
             }
             continue
         }
-      sb.WriteString(r)
+      sb.WriteByte(r)
     }
 
     // Add the last field if there's any
@@ -145,8 +145,11 @@ func trimFieldByQuotes(s []string) []string {
 
 
 
-func exitCommand(args []string) {
-  number, err := strconv.Atoi(args[0])
+func exitCommand(args string) {
+  if len(args) == 0 {
+    os.Exit(0)
+  }
+  number, err := strconv.Atoi(args)
   if err != nil {
     fmt.Printf("%v - %s: not a valid number\n", number, err)
     return
@@ -154,18 +157,19 @@ func exitCommand(args []string) {
   os.Exit(number)
 }
 
-func echoCommand(args []string) {
+func echoCommand(args string) {
   // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
-  // fmt.Printf("args: %s\n", trimFieldByQuotes(args))
+  //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
+  //  fmt.Printf("args: %s\n", args)
   for _, arg := range trimFieldByQuotes(args) {
-    fmt.Printf("%s ", arg)
+    fmt.Printf("%v ", arg)
   }
   fmt.Println()
 }
 
 
-func typeCommand(args []string) {
-  if _, ok := commands[args[0]]; ok {
+func typeCommand(args string) {
+  if _, ok := commands[args]; ok {
       fmt.Printf("%s is a shell builtin\n", args)
       return
   } else {
@@ -173,7 +177,7 @@ func typeCommand(args []string) {
     paths := os.Getenv("PATH")
     pathList := strings.Split(paths, ":")
     for _, path := range pathList {
-      if _, err := os.Stat(filepath.Join(path, args[0])); err == nil {
+      if _, err := os.Stat(filepath.Join(path, args)); err == nil {
         fmt.Printf("%s is %s/%s\n", args, path, args)
         return
       }
@@ -183,7 +187,7 @@ func typeCommand(args []string) {
   fmt.Printf("%s: not found\n", args)
 }
 
-func pwdCommand(_ []string) {
+func pwdCommand(_ string) {
   dir, err := os.Getwd()
   if err != nil {
     fmt.Printf("Error getting current directory: %s\n", err)
@@ -192,7 +196,7 @@ func pwdCommand(_ []string) {
   fmt.Printf("%s\n", dir)
 }
 
-func homeCommand(_ []string) {
+func homeCommand(_ string) {
   homeDir, err := os.UserHomeDir()
   if err != nil {
     fmt.Printf("Error retrieving home dir : %s", err)
@@ -201,13 +205,13 @@ func homeCommand(_ []string) {
   fmt.Printf("%s\n", homeDir)
 }
 
-func cdCommand(args []string) {
+func cdCommand(args string) {
   // abs path
   var cmd string
-  if args[0] == tilde {
+  if args == tilde {
     cmd, _ = os.UserHomeDir()
   } else {
-    cmd = args[0]
+    cmd = args
   }
   if err := os.Chdir(cmd); err != nil {
   fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
@@ -235,10 +239,10 @@ func main() {
 func handleCommands(input string) {
   
   cmd, args, _ := strings.Cut(input, " ")
-  parsedArgs := trimFieldByQuotes(strings.Fields(args))
+  // parsedArgs := trimFieldByQuotes(strings.Fields(args))
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
-  checkCommand(cmd, parsedArgs)
+  checkCommand(cmd, args)
   // test
 }
 
