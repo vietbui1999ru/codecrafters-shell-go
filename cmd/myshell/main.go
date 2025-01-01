@@ -43,6 +43,7 @@ func checkCommand(command string, args string) {
 
     // check if the command is a system command 
 
+    fmt.Printf("command: %s", command)
     _, err := exec.LookPath(command)
     if err != nil {
       
