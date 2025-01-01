@@ -34,6 +34,8 @@ func init() {
 }
 
 func checkCommand(command string, args []string) {
+  // fmt.Printf("command: %s\n", command)
+  // fmt.Printf("args: %s\n", args)
   if cmd, ok := commands[command]; ok {
     cmd(args) // execute the command
     return
@@ -153,7 +155,7 @@ func exitCommand(args []string) {
 
 func echoCommand(args []string) {
   // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
-  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
+  // fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   for _, arg := range trimFieldByQuotes(args) {
     fmt.Printf("%s ", arg)
   }
@@ -231,11 +233,11 @@ func main() {
 // comment again
 func handleCommands(input string) {
   
-  parsedInput := trimFieldByQuotes(strings.Fields(input))
+  cmd, args, _ := strings.Cut(input, " ")
+  parsedArgs := trimFieldByQuotes(strings.Fields(args))
   // fmt.Printf("parsedInput: %s\n", parsedInput)
-  cmd := parsedInput[0]
-  args := parsedInput[1:]
-  checkCommand(cmd, args)
+  // fmt.Printf("parsedInput: %s\n", parsedInput)
+  checkCommand(cmd, parsedArgs)
   // test
 }
 
