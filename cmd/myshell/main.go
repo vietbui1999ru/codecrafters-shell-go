@@ -50,19 +50,18 @@ func checkCommand(command string, args string) {
       fmt.Printf("%s: command not found (1)\n", command)
       return
     }
-    fmt.Printf("args: %s\n", args)
-    for _, arg := range args {
+    // fmt.Printf("args: %s\n", args)
+    // for _, arg := range args {
       // unicode print
-      fmt.Printf("arg: %s\n", string(arg))
-      cmd := exec.Command(command, string(arg))
-      cmd.Stdout = os.Stdout
-      cmd.Stderr = os.Stderr
-      err := cmd.Run()
+    // fmt.Printf("arg: %s\n", string(arg))
+    cmd := exec.Command(command, string(args))
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+    err = cmd.Run()
       if err != nil {
         fmt.Printf("%s: command not found (2)\n", command)
         return
       }
-    }
   }
 }
 
