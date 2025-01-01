@@ -54,6 +54,7 @@ func checkCommand(command string, args string) {
     // for _, arg := range args {
       // unicode print
     // fmt.Printf("arg: %s\n", string(arg))
+    fmt.Printf("args: %s\n", args)
     cmd := exec.Command(command, string(args))
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
