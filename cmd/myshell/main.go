@@ -33,11 +33,11 @@ func init() {
   commands["~"] = homeCommand
 }
 
-func checkCommand(command string, args string) {
+func checkCommand(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
   // fmt.Printf("args: %s\n", args)
   if cmd, ok := commands[command]; ok {
-    cmd(args) // execute the command
+    cmd(strings.Join(args, " ")) // execute the command
     return
   } else {
 
@@ -54,15 +54,25 @@ func checkCommand(command string, args string) {
     // for _, arg := range args {
       // unicode print
     // fmt.Printf("arg: %s\n", string(arg))
-    fmt.Printf("args: %d\n", len(args))
-    cmd := exec.Command(command, string(args))
-    cmd.Stdout = os.Stdout
-    cmd.Stderr = os.Stderr
-    err = cmd.Run()
+    if len(args) > 1 {
+      cmd := exec.Command(command, args...)
+      cmd.Stdout = os.Stdout
+      cmd.Stderr = os.Stderr
+      err = cmd.Run()
       if err != nil {
         fmt.Printf("%s: command not found (2)\n", command)
         return
       }
+    }
+    // fmt.Printf("args: %d\n", len(args))
+    // cmd := exec.Command(command, string(args))
+    // cmd.Stdout = os.Stdout
+    // cmd.Stderr = os.Stderr
+    // err = cmd.Run()
+    //   if err != nil {
+    //     fmt.Printf("%s: command not found (2)\n", command)
+    //     return
+    //   }
   }
 }
 
@@ -241,12 +251,12 @@ func main() {
 func handleCommands(input string) {
   
   cmd, args := trimFieldByQuotes(input)[0], trimFieldByQuotes(input)[1:]
-  parsedArgs := strings.Join(args, " ")
+  // parsedArgs := strings.Join(args, " ")
   // parsedArgs := trimFieldByQuotes(strings.Fields(args))
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   
-  checkCommand(cmd, parsedArgs)
+  checkCommand(cmd, args)
   // test
 }
 
