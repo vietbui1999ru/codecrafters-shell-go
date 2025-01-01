@@ -161,6 +161,7 @@ func echoCommand(args string) {
   // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
   //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   //  fmt.Printf("args: %s\n", args)
+  // test
   for _, arg := range trimFieldByQuotes(args) {
     fmt.Printf("%v ", arg)
   }
