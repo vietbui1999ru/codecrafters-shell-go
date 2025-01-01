@@ -163,7 +163,7 @@ func echoCommand(args string) {
   //  fmt.Printf("args: %s\n", args)
   // test
   for _, arg := range args {
-    fmt.Printf("%s ", string(arg))
+    fmt.Printf("%s", string(arg))
   }
   fmt.Println()
 }
