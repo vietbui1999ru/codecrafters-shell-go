@@ -240,11 +240,13 @@ func main() {
 // comment again
 func handleCommands(input string) {
   
-  cmd, args, _ := strings.Cut(input, " ")
+  cmd, args := trimFieldByQuotes(input)[0], trimFieldByQuotes(input)[1:]
+  parsedArgs := strings.Join(args, " ")
   // parsedArgs := trimFieldByQuotes(strings.Fields(args))
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
-  checkCommand(cmd, args)
+  
+  checkCommand(cmd, parsedArgs)
   // test
 }
 
