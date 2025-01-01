@@ -162,7 +162,7 @@ func echoCommand(args string) {
   //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   //  fmt.Printf("args: %s\n", args)
   // test
-  for _, arg := range trimFieldByQuotes(args) {
+  for _, arg := range args {
     fmt.Printf("%v ", arg)
   }
   fmt.Println()
