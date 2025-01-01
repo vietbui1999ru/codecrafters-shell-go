@@ -50,7 +50,7 @@ func checkCommand(command string, args string) {
       fmt.Printf("%s: command not found (1)\n", command)
       return
     }
-
+    fmt.Printf("args: %s\n", args)
     for _, arg := range args {
       // unicode print
       fmt.Printf("arg: %s\n", string(arg))
