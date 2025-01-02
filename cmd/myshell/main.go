@@ -252,10 +252,11 @@ func handleCommands(input string) {
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   fmt.Printf("cmd: %s\n", cmd)
   fmt.Printf("args: %s\n", args)
-  argsAsCommand := args[0]
-  if argsAsCommand == redirect || argsAsCommand == redirectOne {
-    fmt.Printf("%s: we want to redirect here\n", argsAsCommand)
-    return
+  for _, arg := range args {
+    if arg == redirect || arg == redirectOne {
+      fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+      return
+    }
   }
   
   checkCommand(cmd, args)
