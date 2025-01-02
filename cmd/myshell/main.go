@@ -44,11 +44,6 @@ func checkCommand(command string, args []string) {
   } else {
 
     // check if the command is a system command 
-    argsAsCommand := args[0]
-    if argsAsCommand == redirect || argsAsCommand == redirectOne {
-      fmt.Printf("%s: we want to redirect here\n", argsAsCommand)
-      return
-    }
 
     // fmt.Printf("command: %s\n", command)
     _, err := exec.LookPath(command)
@@ -237,7 +232,7 @@ func main() {
     // Wait for user input
     input, err := bufio.NewReader(os.Stdin).ReadString('\n')
     trimmpedInput := strings.TrimSpace(input)
-    fmt.Printf("%s: command not found\n", trimmpedInput)
+    // fmt.Printf("%s: command not found\n", trimmpedInput)
     
     if err != nil {
       fmt.Printf("%s: invalid input\n", input)
@@ -255,6 +250,13 @@ func handleCommands(input string) {
   // parsedArgs := trimFieldByQuotes(strings.Fields(args))
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
+  fmt.Printf("cmd: %s\n", cmd)
+  fmt.Printf("args: %s\n", args)
+  argsAsCommand := args[0]
+  if argsAsCommand == redirect || argsAsCommand == redirectOne {
+    fmt.Printf("%s: we want to redirect here\n", argsAsCommand)
+    return
+  }
   
   checkCommand(cmd, args)
   // test
