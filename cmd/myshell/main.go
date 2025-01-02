@@ -33,6 +33,7 @@ func init() {
   commands["pwd"] = pwdCommand
   commands["cd"] = cdCommand
   commands["~"] = homeCommand
+  // commands[">"] = redirectCommand
 }
 
 func checkCommand(command string, args []string) {
@@ -44,6 +45,15 @@ func checkCommand(command string, args []string) {
   } else {
 
     // check if the command is a system command 
+    for index, arg := range args {
+      if arg == redirect || arg == redirectOne {
+        // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+        prev, next := args[:index], args[index+1:]
+        fmt.Printf("arg: %s\n", arg)
+        fmt.Printf("prev: %s\n", prev)
+        fmt.Printf("next: %s\n", next)
+        
+    }
 
     // fmt.Printf("command: %s\n", command)
     _, err := exec.LookPath(command)
@@ -254,7 +264,8 @@ func handleCommands(input string) {
   fmt.Printf("args: %s\n", args)
   for _, arg := range args {
     if arg == redirect || arg == redirectOne {
-      fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+      // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+      checkCommand(cmd, args)
       return
     }
   }
