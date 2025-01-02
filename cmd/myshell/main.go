@@ -221,7 +221,7 @@ func cdCommand(args string) {
     cmd = args
   }
   if err := os.Chdir(cmd); err != nil {
-  fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
+  fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory here\n", args)
   }
 }
 
