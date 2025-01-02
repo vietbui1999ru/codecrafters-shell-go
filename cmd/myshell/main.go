@@ -20,6 +20,8 @@ var dollar = `$`
 var newline = `\n`
 var space = ` `
 var tilde = `~`
+var redirect = `>`
+var redirectOne = `1>`
 
 var commands map[string]func(string)
 
@@ -204,7 +206,7 @@ func pwdCommand(_ string) {
 func homeCommand(_ string) {
   homeDir, err := os.UserHomeDir()
   if err != nil {
-    fmt.Printf("Error retrieving home dir : %s", err)
+    fmt.Printf("Error retrieving home dir : %s\n", err)
     return
   }
   fmt.Printf("%s\n", homeDir)
@@ -249,6 +251,11 @@ func handleCommands(input string) {
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   
+  argsAsCommand := args[0]
+  if argsAsCommand == redirect || argsAsCommand == redirectOne {
+fmt.Printf("%s: we want to redirect here\n", argsAsCommand)
+    return
+  }
   checkCommand(cmd, args)
   // test
 }
