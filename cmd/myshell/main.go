@@ -52,6 +52,7 @@ func checkCommand(command string, args []string) {
         fmt.Printf("arg: %s\n", arg)
         fmt.Printf("prev: %s\n", prev)
         fmt.Printf("next: %s\n", next)
+      }
         
     }
 
