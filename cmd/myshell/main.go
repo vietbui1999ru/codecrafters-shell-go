@@ -44,6 +44,11 @@ func checkCommand(command string, args []string) {
   } else {
 
     // check if the command is a system command 
+    argsAsCommand := args[0]
+    if argsAsCommand == redirect || argsAsCommand == redirectOne {
+      fmt.Printf("%s: we want to redirect here\n", argsAsCommand)
+      return
+    }
 
     // fmt.Printf("command: %s\n", command)
     _, err := exec.LookPath(command)
@@ -221,7 +226,7 @@ func cdCommand(args string) {
     cmd = args
   }
   if err := os.Chdir(cmd); err != nil {
-  fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory here\n", args)
+  fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
   }
 }
 
@@ -251,11 +256,6 @@ func handleCommands(input string) {
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   
-  argsAsCommand := args[0]
-  if argsAsCommand == redirect || argsAsCommand == redirectOne {
-fmt.Printf("%s: we want to redirect here\n", argsAsCommand)
-    return
-  }
   checkCommand(cmd, args)
   // test
 }
