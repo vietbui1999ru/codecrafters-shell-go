@@ -22,6 +22,7 @@ var space = ` `
 var tilde = `~`
 var redirect = `>`
 var redirectOne = `1>`
+var redirectTwo = `2>`
 // 
 var commands map[string]func(string, string)
 
@@ -43,7 +44,7 @@ func checkCommand(command string, args []string) {
     var prev string
     // check if the command is a system command 
     for index, arg := range args {
-      if arg == redirect || arg == redirectOne {
+      if arg == redirect || arg == redirectOne || arg == redirectTwo {
         // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
         if index+1 < len(args) {
           prev = args[index+1] 
@@ -66,8 +67,19 @@ func checkCommand(command string, args []string) {
     // fmt.Printf("command: %s\n", command)
     _, err := exec.LookPath(command)
     if err != nil {
-      fmt.Printf("%s: command not found\n", command)
-      return
+      if prev != "" {
+        var file *os.File
+        file, err = os.Create(prev)
+        if err != nil {
+          fmt.Printf("Error creating file: %s\n", err)
+          return
+        }
+        defer file.Close()
+        fmt.Fprintf(file, "%s: command not found\n", command)
+      } else {
+        fmt.Printf("%s: command not found\n", command)
+        return
+      }
     }
     cmd := exec.Command(command, args...)
     if prev != "" {
@@ -89,83 +101,6 @@ func checkCommand(command string, args []string) {
         return
       }
   }
-}
-
-func trimFieldByQuotes(s string) []string {
-    a := []string{}
-    sb := &strings.Builder{}
-    quoted := false
-    var quoteChar byte 
-    // escaping := false
-    for i := 0; i < len(s); i++ {
-        // Handle quotes
-        r := s[i]
-        if r == singleQuotes[0] || r == doubleQuotes[0] {
-            if quoted && r == quoteChar {
-                // End of quoted field
-                quoted = false
-                quoteChar = 0
-            } else if !quoted {
-                // Start of quoted field
-                quoted = true
-                quoteChar = r
-            } else {
-                  sb.WriteByte(r)
-                }
-                
-            continue
-        }
-        if r == backslash[0] {
-          if quoted && quoteChar == doubleQuotes[0] {
-            if i+1 < len(s) {
-              nextChar := s[i+1]
-              // fmt.Printf("debug 1\n")
-              if nextChar == dollar[0] || nextChar == backslash[0] || nextChar == doubleQuotes[0] || nextChar == newline[0] {
-                i++
-          
-                sb.WriteByte(nextChar)
-                // fmt.Printf("debug 2\n")
-                continue
-              }
-            }
-          } else if !quoted {
-          // Skip the backslash outside of quotes
-            if i+1 < len(s) {
-              i++
-              sb.WriteByte(s[i])
-              // fmt.Printf("debug 3\n")
-            }
-            continue
-          }
-        } 
-
-        // Handle spaces outside quoted fields
-        if !quoted && r == space[0] {
-            if sb.Len() > 0 {
-                a = append(a, sb.String())
-                sb.Reset()
-            }
-              
-            // fmt.Printf("debug 4 %v\n", string(r))
-            continue
-        }
-        if !quoted && r == backslash[0] {
-            // Skip the backslash outside of quotes
-            if i+1 < len(s) {
-              i++
-              sb.WriteByte(r)
-            }
-            continue
-        }
-      sb.WriteByte(r)
-    }
-
-    // Add the last field if there's any
-    if sb.Len() > 0 {
-        a = append(a, sb.String())
-    }
-
-    return a
 }
 
 
@@ -293,3 +228,79 @@ func handleCommands(input string) {
   // test
 }
 
+func trimFieldByQuotes(s string) []string {
+    a := []string{}
+    sb := &strings.Builder{}
+    quoted := false
+    var quoteChar byte 
+    // escaping := false
+    for i := 0; i < len(s); i++ {
+        // Handle quotes
+        r := s[i]
+        if r == singleQuotes[0] || r == doubleQuotes[0] {
+            if quoted && r == quoteChar {
+                // End of quoted field
+                quoted = false
+                quoteChar = 0
+            } else if !quoted {
+                // Start of quoted field
+                quoted = true
+                quoteChar = r
+            } else {
+                  sb.WriteByte(r)
+                }
+                
+            continue
+        }
+        if r == backslash[0] {
+          if quoted && quoteChar == doubleQuotes[0] {
+            if i+1 < len(s) {
+              nextChar := s[i+1]
+              // fmt.Printf("debug 1\n")
+              if nextChar == dollar[0] || nextChar == backslash[0] || nextChar == doubleQuotes[0] || nextChar == newline[0] {
+                i++
+          
+                sb.WriteByte(nextChar)
+                // fmt.Printf("debug 2\n")
+                continue
+              }
+            }
+          } else if !quoted {
+          // Skip the backslash outside of quotes
+            if i+1 < len(s) {
+              i++
+              sb.WriteByte(s[i])
+              // fmt.Printf("debug 3\n")
+            }
+            continue
+          }
+        } 
+
+        // Handle spaces outside quoted fields
+        if !quoted && r == space[0] {
+            if sb.Len() > 0 {
+                a = append(a, sb.String())
+                sb.Reset()
+            }
+              
+            // fmt.Printf("debug 4 %v\n", string(r))
+            continue
+        }
+        if !quoted && r == backslash[0] {
+            // Skip the backslash outside of quotes
+            if i+1 < len(s) {
+              i++
+              sb.WriteByte(r)
+            }
+            continue
+        }
+      sb.WriteByte(r)
+    }
+
+    // Add the last field if there's any
+    if sb.Len() > 0 {
+        a = append(a, sb.String())
+    }
+
+    return a
+}
