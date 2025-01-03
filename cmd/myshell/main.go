@@ -38,7 +38,7 @@ func init() {
 
 func checkCommand(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
-  // fmt.Printf("args: %s\n", args)
+  fmt.Printf("args: %s\n", args)
   if cmd, ok := commands[command]; ok {
     cmd(strings.Join(args, " ")) // execute the command
     return
