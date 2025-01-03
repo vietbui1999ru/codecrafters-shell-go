@@ -68,22 +68,9 @@ func checkCommand(command string, args []string) {
     // fmt.Printf("command: %s\n", command)
       _, err := exec.LookPath(command)
       if err != nil {
-        if prev != "" {
-          var file *os.File
-          file, err = os.Create(prev)
-          if err != nil {
-            fmt.Printf("Error creating file: %s\n", err)
-            return
-          }
-          defer file.Close()
-          fmt.Fprintf(file, "%s: command not found\n", command)
-        } else {
-          fmt.Printf("%s: command not found\n", command)
-          return
-        }
-      } else {
-        cmd = exec.Command(command, args...)
+        fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
       }
+      cmd = exec.Command(command, args...)
       if prev != "" {
         var file *os.File
         file, err = os.Create(prev)
@@ -193,7 +180,7 @@ func cdCommand(args string, redirect string) {
     cmd = args
   }
   if err := os.Chdir(cmd); err != nil {
-    fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory (1)\n", args)
+    fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
   }
 }
 
