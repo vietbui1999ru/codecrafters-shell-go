@@ -124,6 +124,10 @@ func echoCommand(args string, redirectBool string) {
       if redirectBool == redirectOne || redirectBool == redirect {
         _, err = file.WriteString(args + "\n")
       } else if redirectBool == redirectTwo {
+      for _, arg := range args {
+        fmt.Printf("%s", string(arg))
+      }
+      fmt.Println()
         os.Stderr.WriteString(args + "\n")
       }
       if err != nil {
