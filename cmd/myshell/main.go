@@ -67,11 +67,11 @@ func checkCommand(command string, args []string) {
       var cmd *exec.Cmd
     // fmt.Printf("command: %s\n", command)
       _, err := exec.LookPath(command)
+      cmd = exec.Command(command, args...)
       if err != nil {
         // fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
         cmd.Stderr = os.Stderr
       }
-      cmd = exec.Command(command, args...)
       if prev != "" {
         var file *os.File
         file, err = os.Create(prev)
