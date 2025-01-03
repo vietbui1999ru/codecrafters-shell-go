@@ -106,7 +106,7 @@ func echoCommand(args string, redirectFile string) {
   //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   //  fmt.Printf("args: %s\n", args)
   // test
-  fmt.Printf("redirect: %s\n", redirectFile)
+  // fmt.Printf("redirect: %s\n", redirectFile)
   if redirectFile != "" {
     file, err := os.Create(redirectFile)
       if err != nil {
@@ -116,8 +116,8 @@ func echoCommand(args string, redirectFile string) {
       defer file.Close()
 
       // Write the args to the file
-      _, err = file.WriteString(args)
-      os.Stderr.WriteString(args)
+      _, err = file.WriteString(args + "\n")
+      os.Stderr.WriteString(args + "\n")
       if err != nil {
           fmt.Printf("Error writing to file: %v\n", err)
       }
