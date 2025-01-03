@@ -41,13 +41,13 @@ func checkCommand(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
   // fmt.Printf("args: %s\n", args)
 
-    var prev string
+    var redirectFile string
     // check if the command is a system command 
     for index, arg := range args {
       if arg == redirect || arg == redirectOne || arg == redirectTwo {
         // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
         if index+1 < len(args) {
-          prev = args[index+1] 
+          redirectFile = args[index+1] 
           // fmt.Printf("arg: %s\n", arg)
           // fmt.Printf("prev: %s\n", prev)
           // fmt.Printf("next: %s\n", next)
@@ -60,7 +60,7 @@ func checkCommand(command string, args []string) {
       }
     }
     if cmd, ok := commands[command]; ok {
-      cmd(strings.Join(args, " "), prev) // execute the command
+      cmd(strings.Join(args, " "), redirectFile) // execute the command
       return
     } else {
 
@@ -71,9 +71,9 @@ func checkCommand(command string, args []string) {
       if err != nil {
         fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
       }
-      if prev != "" {
+      if redirectFile != "" {
         var file *os.File
-        file, err = os.Create(prev)
+        file, err = os.Create(redirectFile)
         if err != nil {
           fmt.Printf("Error creating file: %s\n", err)
           return
@@ -121,7 +121,11 @@ func echoCommand(args string, redirectBool string) {
       defer file.Close()
 
       // Write the args to the file
-      _, err = file.WriteString(args + "\n")
+      if redirectBool == redirectOne || redirectBool == redirect {
+        _, err = file.WriteString(args + "\n")
+      } else if redirectBool == redirectTwo {
+        os.Stderr.WriteString(args + "\n")
+      }
       if err != nil {
           fmt.Printf("Error writing to file: %v\n", err)
       }
