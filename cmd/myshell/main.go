@@ -22,11 +22,11 @@ var space = ` `
 var tilde = `~`
 var redirect = `>`
 var redirectOne = `1>`
-
-var commands map[string]func(string)
+// 
+var commands map[string]func(string, bool)
 
 func init() {
-  commands = make(map[string]func(string)) 
+  commands = make(map[string]func(string, bool)) 
   commands["exit"] = exitCommand
   commands["echo"] = echoCommand
   commands["type"] = typeCommand
@@ -41,6 +41,7 @@ func checkCommand(command string, args []string) {
   // fmt.Printf("args: %s\n", args)
 
     var prev string
+    redirectBool := false
     // check if the command is a system command 
     for index, arg := range args {
       if arg == redirect || arg == redirectOne {
@@ -58,8 +59,11 @@ func checkCommand(command string, args []string) {
         }
       }
     }
+    if prev != "" {
+      redirectBool = true
+    }
     if cmd, ok := commands[command]; ok {
-      cmd(strings.Join(args, " ")) // execute the command
+      cmd(strings.Join(args, " "), redirectBool) // execute the command
       return
     } else {
 
@@ -172,7 +176,7 @@ func trimFieldByQuotes(s string) []string {
 
 
 
-func exitCommand(args string) {
+func exitCommand(args string, redirect bool) {
   if len(args) == 0 {
     os.Exit(0)
   }
@@ -184,11 +188,14 @@ func exitCommand(args string) {
   os.Exit(number)
 }
 
-func echoCommand(args string) {
+func echoCommand(args string, redirectBool bool) {
   // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
   //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   //  fmt.Printf("args: %s\n", args)
   // test
+  if redirectBool {
+    fmt.Fprintf(os.Stdout, "%s\n", args)
+  }
   for _, arg := range args {
     fmt.Printf("%s", string(arg))
   }
@@ -196,7 +203,7 @@ func echoCommand(args string) {
 }
 
 
-func typeCommand(args string) {
+func typeCommand(args string, redirect bool) {
   if _, ok := commands[args]; ok {
       fmt.Printf("%s is a shell builtin\n", args)
       return
@@ -215,7 +222,7 @@ func typeCommand(args string) {
   fmt.Printf("%s: not found\n", args)
 }
 
-func pwdCommand(_ string) {
+func pwdCommand(_ string, redirect bool) {
   dir, err := os.Getwd()
   if err != nil {
     fmt.Printf("Error getting current directory: %s\n", err)
@@ -224,7 +231,7 @@ func pwdCommand(_ string) {
   fmt.Printf("%s\n", dir)
 }
 
-func homeCommand(_ string) {
+func homeCommand(_ string, redirect bool) {
   homeDir, err := os.UserHomeDir()
   if err != nil {
     fmt.Printf("Error retrieving home dir : %s\n", err)
@@ -233,7 +240,7 @@ func homeCommand(_ string) {
   fmt.Printf("%s\n", homeDir)
 }
 
-func cdCommand(args string) {
+func cdCommand(args string, redirect bool) {
   // abs path
   var cmd string
   if args == tilde {
