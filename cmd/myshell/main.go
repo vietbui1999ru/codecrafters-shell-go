@@ -38,31 +38,29 @@ func init() {
 
 func checkCommand(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
-  fmt.Printf("args: %s\n", args)
+  // fmt.Printf("args: %s\n", args)
   if cmd, ok := commands[command]; ok {
     cmd(strings.Join(args, " ")) // execute the command
     return
   } else {
 
-    var prev []string
+    var prev string
     // check if the command is a system command 
     for index, arg := range args {
       if arg == redirect || arg == redirectOne {
         // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
         if index+1 < len(args) {
-          prev = args[:index] 
-          next := args[index+1:]
+          prev = args[index+1] 
           // fmt.Printf("arg: %s\n", arg)
           // fmt.Printf("prev: %s\n", prev)
           // fmt.Printf("next: %s\n", next)
-          args = next
+          args = args[:index]
           break
         } else {
           fmt.Printf("Error, no file to redirect to\n")
           return
         }
       }
-        
     }
 
     // fmt.Printf("command: %s\n", command)
@@ -73,7 +71,7 @@ func checkCommand(command string, args []string) {
       return
     }
     cmd := exec.Command(command, args...)
-    if prev[0] != "" {
+    if prev != "" {
       var file *os.File
       file, err = os.Create(strings.Join(args, " "))
       if err != nil {
