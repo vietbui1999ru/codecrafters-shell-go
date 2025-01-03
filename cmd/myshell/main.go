@@ -75,7 +75,7 @@ func checkCommand(command string, args []string) {
     cmd := exec.Command(command, args...)
     if prev[0] != "" {
       var file *os.File
-      file, err = os.Create(strings.Join(prev, " "))
+      file, err = os.Create(strings.Join(args, " "))
       if err != nil {
         fmt.Printf("Error creating file: %s\n", err)
         return
