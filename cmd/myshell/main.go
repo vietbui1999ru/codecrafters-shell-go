@@ -273,8 +273,8 @@ func handleCommands(input string) {
   // parsedArgs := trimFieldByQuotes(strings.Fields(args))
   // fmt.Printf("parsedInput: %s\n", parsedInput)
   // fmt.Printf("parsedInput: %s\n", parsedInput)
-  fmt.Printf("cmd: %s\n", cmd)
-  fmt.Printf("args: %s\n", args)
+  // fmt.Printf("cmd: %s\n", cmd)
+  // fmt.Printf("args: %s\n", args)
   for _, arg := range args {
     if arg == redirect || arg == redirectOne {
       // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
