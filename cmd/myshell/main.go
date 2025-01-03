@@ -195,6 +195,7 @@ func echoCommand(args string, redirectBool bool) {
   // test
   if redirectBool {
     fmt.Fprintf(os.Stdout, "%s\n", args)
+    return
   }
   for _, arg := range args {
     fmt.Printf("%s", string(arg))
