@@ -44,14 +44,23 @@ func checkCommand(command string, args []string) {
     return
   } else {
 
+    var prev []string
     // check if the command is a system command 
     for index, arg := range args {
       if arg == redirect || arg == redirectOne {
         // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
-        prev, next := args[:index], args[index+1:]
-        fmt.Printf("arg: %s\n", arg)
-        fmt.Printf("prev: %s\n", prev)
-        fmt.Printf("next: %s\n", next)
+        if index+1 < len(args) {
+          prev = args[:index] 
+          next := args[index+1:]
+          // fmt.Printf("arg: %s\n", arg)
+          // fmt.Printf("prev: %s\n", prev)
+          // fmt.Printf("next: %s\n", next)
+          args = next
+          break
+        } else {
+          fmt.Printf("Error, no file to redirect to\n")
+          return
+        }
       }
         
     }
@@ -63,16 +72,19 @@ func checkCommand(command string, args []string) {
       fmt.Printf("%s: command not found\n", command)
       return
     }
-    // fmt.Printf("args: %s\n", args)
-    // for _, arg := range args {
-      // unicode print
-    // fmt.Printf("arg: %s\n", string(arg))
-    // fmt.Printf("args: %d\n", len(args))
-    // for _, arg := range args {
-    //   fmt.Printf("arg: %s\n", arg)
-    // }
     cmd := exec.Command(command, args...)
-    cmd.Stdout = os.Stdout
+    if prev[0] != "" {
+      var file *os.File
+      file, err = os.Create(strings.Join(prev, " "))
+      if err != nil {
+        fmt.Printf("Error creating file: %s\n", err)
+        return
+      }
+      defer file.Close()
+      cmd.Stdout = file
+    } else {
+      cmd.Stdout = os.Stdout
+    }
     cmd.Stderr = os.Stderr
     err = cmd.Run()
       if err != nil {
