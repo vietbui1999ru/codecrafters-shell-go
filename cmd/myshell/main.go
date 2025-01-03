@@ -69,8 +69,7 @@ func checkCommand(command string, args []string) {
       _, err := exec.LookPath(command)
       cmd = exec.Command(command, args...)
       if err != nil {
-        // fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
-        cmd.Stderr = os.Stderr
+        fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
       }
       if prev != "" {
         var file *os.File
@@ -81,6 +80,7 @@ func checkCommand(command string, args []string) {
         }
         defer file.Close()
         cmd.Stdout = file
+        cmd.Stderr = file 
       } else {
         cmd.Stdout = os.Stdout
       }
