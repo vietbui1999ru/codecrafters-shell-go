@@ -48,9 +48,6 @@ func checkCommand(command string, args []string) {
         // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
         if index+1 < len(args) {
           redirectFile = args[index+1] 
-          // fmt.Printf("arg: %s\n", arg)
-          // fmt.Printf("prev: %s\n", prev)
-          // fmt.Printf("next: %s\n", next)
           args = args[:index]
           break
         } else {
@@ -65,7 +62,7 @@ func checkCommand(command string, args []string) {
     } else {
 
       var cmd *exec.Cmd
-    // fmt.Printf("command: %s\n", command)
+      // fmt.Printf("command: %s\n", command)
       _, err := exec.LookPath(command)
       cmd = exec.Command(command, args...)
       if err != nil {
@@ -92,9 +89,6 @@ func checkCommand(command string, args []string) {
     }
 }
 
-
-
-
 func exitCommand(args string, redirect string) {
   if len(args) == 0 {
     os.Exit(0)
@@ -112,6 +106,7 @@ func echoCommand(args string, redirectBool string) {
   //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   //  fmt.Printf("args: %s\n", args)
   // test
+  fmt.Printf("redirect: %s\n", redirectBool)
   if redirectBool != "" {
     file, err := os.Create(redirectBool)
       if err != nil {
