@@ -106,7 +106,7 @@ func exitCommand(args string, redirect string, _ bool) {
 }
 
 func echoCommand(args string, redirectFile string, isStderr bool) {
-  if redirectFile != "" {
+  if isStderr && redirectFile != "" {
     file, err := os.Create(redirectFile)
       if err != nil {
           fmt.Printf("Error creating file: %v\n", err)
@@ -117,15 +117,7 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
       // Write the args to the file
       // _, err = file.WriteString(args + "\n")
       // os.Stderr.WriteString(args + "\n")
-      if isStderr {
-              // Redirect to stderr
-              // os.Stderr.WriteString(args + "\n")
-              _, err = file.WriteString(args + "\n")
-          } else {
-              // Redirect to stdout
-              // os.Stdout.WriteString(args + "\n")
-              _, err = file.WriteString(args + "\n")
-        }
+      _, err = file.WriteString(args + "\n")
       if err != nil {
           fmt.Printf("Error writing to file: %v\n", err)
       }
@@ -135,6 +127,7 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
   //   fmt.Printf("%s", string(arg))
   // }
   // fmt.Println()
+  fmt.Printf("%s\n", args)
 }
 
 
