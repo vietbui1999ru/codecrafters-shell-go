@@ -131,10 +131,10 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
       }
       return
     }
-  for _, arg := range args {
-    fmt.Printf("%s", string(arg))
-  }
-  fmt.Println()
+  // for _, arg := range args {
+  //   fmt.Printf("%s", string(arg))
+  // }
+  // fmt.Println()
 }
 
 
