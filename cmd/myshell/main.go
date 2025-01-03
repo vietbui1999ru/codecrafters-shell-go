@@ -101,14 +101,14 @@ func exitCommand(args string, redirect string) {
   os.Exit(number)
 }
 
-func echoCommand(args string, redirectBool string) {
+func echoCommand(args string, redirectFile string) {
   // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
   //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
   //  fmt.Printf("args: %s\n", args)
   // test
-  fmt.Printf("redirect: %s\n", redirectBool)
-  if redirectBool != "" {
-    file, err := os.Create(redirectBool)
+  fmt.Printf("redirect: %s\n", redirectFile)
+  if redirectFile != "" {
+    file, err := os.Create(redirectFile)
       if err != nil {
           fmt.Printf("Error creating file: %v\n", err)
           return
@@ -116,17 +116,8 @@ func echoCommand(args string, redirectBool string) {
       defer file.Close()
 
       // Write the args to the file
-      if redirectBool == redirectOne || redirectBool == redirect {
-        fmt.Println("here (1)")
-        _, err = file.WriteString(args + "\n")
-      } else if redirectBool == redirectTwo {
-        for _, arg := range args {
-          fmt.Printf("%s", string(arg))
-        }
-        fmt.Println()
-        fmt.Println("here (2)")
-        os.Stderr.WriteString(args + "\n")
-      }
+      _, err = file.WriteString(args)
+      os.Stderr.WriteString(args)
       if err != nil {
           fmt.Printf("Error writing to file: %v\n", err)
       }
