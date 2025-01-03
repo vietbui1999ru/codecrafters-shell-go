@@ -24,10 +24,10 @@ var redirect = `>`
 var redirectOne = `1>`
 var redirectTwo = `2>`
 // 
-var commands map[string]func(string, string)
+var commands map[string]func(string, string, bool)
 
 func init() {
-  commands = make(map[string]func(string, string)) 
+  commands = make(map[string]func(string, string, bool)) 
   commands["exit"] = exitCommand
   commands["echo"] = echoCommand
   commands["type"] = typeCommand
@@ -43,9 +43,13 @@ func checkCommand(command string, args []string) {
 
     var redirectFile string
     // check if the command is a system command 
+    var isStderr bool
     for index, arg := range args {
       if arg == redirect || arg == redirectOne || arg == redirectTwo {
         // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+        if arg == redirectTwo {
+          isStderr = true
+        }
         if index+1 < len(args) {
           redirectFile = args[index+1] 
           args = args[:index]
@@ -57,7 +61,7 @@ func checkCommand(command string, args []string) {
       }
     }
     if cmd, ok := commands[command]; ok {
-      cmd(strings.Join(args, " "), redirectFile) // execute the command
+      cmd(strings.Join(args, " "), redirectFile, isStderr) // execute the command
       return
     } else {
 
@@ -89,7 +93,7 @@ func checkCommand(command string, args []string) {
     }
 }
 
-func exitCommand(args string, redirect string) {
+func exitCommand(args string, redirect string, _ bool) {
   if len(args) == 0 {
     os.Exit(0)
   }
@@ -101,12 +105,7 @@ func exitCommand(args string, redirect string) {
   os.Exit(number)
 }
 
-func echoCommand(args string, redirectFile string) {
-  // fmt.Printf("%s\n", strings.Join(strings.Fields(args), " "))
-  //  fmt.Printf("args: %s\n", trimFieldByQuotes(args))
-  //  fmt.Printf("args: %s\n", args)
-  // test
-  // fmt.Printf("redirect: %s\n", redirectFile)
+func echoCommand(args string, redirectFile string, isStderr bool) {
   if redirectFile != "" {
     file, err := os.Create(redirectFile)
       if err != nil {
@@ -116,8 +115,17 @@ func echoCommand(args string, redirectFile string) {
       defer file.Close()
 
       // Write the args to the file
-      _, err = file.WriteString(args + "\n")
-      os.Stderr.WriteString(args + "\n")
+      // _, err = file.WriteString(args + "\n")
+      // os.Stderr.WriteString(args + "\n")
+      if isStderr {
+              // Redirect to stderr
+              os.Stderr.WriteString(args + "\n")
+              _, err = file.WriteString(args + "\n")
+          } else {
+              // Redirect to stdout
+              os.Stdout.WriteString(args + "\n")
+              _, err = file.WriteString(args + "\n")
+        }
       if err != nil {
           fmt.Printf("Error writing to file: %v\n", err)
       }
@@ -130,7 +138,7 @@ func echoCommand(args string, redirectFile string) {
 }
 
 
-func typeCommand(args string, redirect string) {
+func typeCommand(args string, redirect string, _ bool) {
   if _, ok := commands[args]; ok {
       fmt.Printf("%s is a shell builtin\n", args)
       return
@@ -149,7 +157,7 @@ func typeCommand(args string, redirect string) {
   fmt.Printf("%s: not found\n", args)
 }
 
-func pwdCommand(_ string, redirect string) {
+func pwdCommand(_ string, redirect string, _ bool) {
   dir, err := os.Getwd()
   if err != nil {
     fmt.Printf("Error getting current directory: %s\n", err)
@@ -158,7 +166,7 @@ func pwdCommand(_ string, redirect string) {
   fmt.Printf("%s\n", dir)
 }
 
-func homeCommand(_ string, redirect string) {
+func homeCommand(_ string, redirect string, _ bool) {
   homeDir, err := os.UserHomeDir()
   if err != nil {
     fmt.Printf("Error retrieving home dir : %s\n", err)
@@ -167,7 +175,7 @@ func homeCommand(_ string, redirect string) {
   fmt.Printf("%s\n", homeDir)
 }
 
-func cdCommand(args string, redirect string) {
+func cdCommand(args string, redirect string, _ bool) {
   // abs path
   var cmd string
   if args == tilde {
