@@ -68,7 +68,8 @@ func checkCommand(command string, args []string) {
     // fmt.Printf("command: %s\n", command)
       _, err := exec.LookPath(command)
       if err != nil {
-        fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
+        // fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
+        cmd.Stderr = os.Stderr
       }
       cmd = exec.Command(command, args...)
       if prev != "" {
@@ -83,7 +84,6 @@ func checkCommand(command string, args []string) {
       } else {
         cmd.Stdout = os.Stdout
       }
-      cmd.Stderr = os.Stderr
       err = cmd.Run()
         if err != nil {
           // fmt.Printf("%s: command not found (2)\n", command)
