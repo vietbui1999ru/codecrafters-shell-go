@@ -119,11 +119,11 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
       // os.Stderr.WriteString(args + "\n")
       if isStderr {
               // Redirect to stderr
-              os.Stderr.WriteString(args + "\n")
+              // os.Stderr.WriteString(args + "\n")
               _, err = file.WriteString(args + "\n")
           } else {
               // Redirect to stdout
-              os.Stdout.WriteString(args + "\n")
+              // os.Stdout.WriteString(args + "\n")
               _, err = file.WriteString(args + "\n")
         }
       if err != nil {
