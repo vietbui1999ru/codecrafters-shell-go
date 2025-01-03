@@ -39,10 +39,6 @@ func init() {
 func checkCommand(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
   // fmt.Printf("args: %s\n", args)
-  if cmd, ok := commands[command]; ok {
-    cmd(strings.Join(args, " ")) // execute the command
-    return
-  } else {
 
     var prev string
     // check if the command is a system command 
@@ -62,6 +58,10 @@ func checkCommand(command string, args []string) {
         }
       }
     }
+    if cmd, ok := commands[command]; ok {
+      cmd(strings.Join(args, " ")) // execute the command
+      return
+    } else {
 
     // fmt.Printf("command: %s\n", command)
     _, err := exec.LookPath(command)
@@ -267,12 +267,6 @@ func main() {
 func handleCommands(input string) {
   
   cmd, args := trimFieldByQuotes(input)[0], trimFieldByQuotes(input)[1:]
-  // parsedArgs := strings.Join(args, " ")
-  // parsedArgs := trimFieldByQuotes(strings.Fields(args))
-  // fmt.Printf("parsedInput: %s\n", parsedInput)
-  // fmt.Printf("parsedInput: %s\n", parsedInput)
-  // fmt.Printf("cmd: %s\n", cmd)
-  // fmt.Printf("args: %s\n", args)
   for _, arg := range args {
     if arg == redirect || arg == redirectOne {
       // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
