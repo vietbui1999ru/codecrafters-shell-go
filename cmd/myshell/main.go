@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -81,7 +82,8 @@ func checkCommand(command string, args []string) {
         }
         defer file.Close()
         cmd.Stdout = file
-        cmd.Stderr = file 
+    } else if isStderr && redirectFile != "" {
+        cmd.Stderr = os.Stderr 
       } else {
         cmd.Stdout = os.Stdout
       }
@@ -105,30 +107,68 @@ func exitCommand(args string, redirect string, _ bool) {
   os.Exit(number)
 }
 
-func echoCommand(args string, redirectFile string, isStderr bool) {
-  if isStderr && redirectFile != "" {
-    file, err := os.Create(redirectFile)
-      if err != nil {
-          fmt.Printf("Error creating file: %v\n", err)
-          return
-      }
-      defer file.Close()
+// func echoCommand(args string, redirectFile string, isStderr bool) {
+//   var outFile os.File
+//   if redirectFile != "" {
+//     file, err := os.Create(redirectFile)
+//       if err != nil {
+//           if os.IsNotExist(err) {
+//             out, err := os.Create(redirectFile)
+//             outFile = *out
+//             if err != nil {
+//               log.Println(err)
+//             }
+//           } else {
+//               log.Fatal(err)
+//         }
+//       }
+//       
+//       defer file.Close()
+// 
+//       // Write the args to the file
+//       // _, err = file.WriteString(args + "\n")
+//       // os.Stderr.WriteString(args + "\n")
+//       outFile = *file
+//       fmt.Fprintln(outFile, args)
+//       if err != nil {
+//           fmt.Printf("Error writing to file: %v\n", err)
+//       }
+//       return
+//     }
+//   // for _, arg := range args {
+//   //   fmt.Printf("%s", string(arg))
+//   // }
+//   // fmt.Println()
+//   fmt.Printf("%s\n", args)
+// }
 
-      // Write the args to the file
-      // _, err = file.WriteString(args + "\n")
-      // os.Stderr.WriteString(args + "\n")
-      _, err = file.WriteString(args + "\n")
-      if err != nil {
-          fmt.Printf("Error writing to file: %v\n", err)
-      }
-      return
+func echoCommand(args string, redirectFile string, isStderr bool) {
+    if redirectFile != "" {
+        // Open or create the file for writing
+        file, err := os.Create(redirectFile)
+        if err != nil {
+            log.Fatalf("Error creating file: %v\n", err)
+        }
+        defer file.Close()
+
+        if isStderr {
+            // Write to stderr and to the file
+            fmt.Fprintln(os.Stderr, args)
+        }
+
+        // Write to the file
+        fmt.Fprintln(file, args)
+        return
     }
-  // for _, arg := range args {
-  //   fmt.Printf("%s", string(arg))
-  // }
-  // fmt.Println()
-  fmt.Printf("%s\n", args)
+
+    // Default behavior: Print to stdout
+    if isStderr {
+        fmt.Fprintln(os.Stderr, args)
+    } else {
+        fmt.Println(args)
+    }
 }
+
 
 
 func typeCommand(args string, redirect string, _ bool) {
