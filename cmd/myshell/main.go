@@ -180,13 +180,11 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 
         if isStderr {
             // Write to stderr and to the file
-            os.Stderr.WriteString(args + "\n")
-            return
+            os.Stderr = file
         }
 
         // Write to the file
         fmt.Fprintln(file, args)
-        return
     }
 
     // Default behavior: Print to stdout
