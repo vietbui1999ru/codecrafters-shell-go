@@ -70,11 +70,11 @@ func checkCommand(command string, args []string) {
       // fmt.Printf("command: %s\n", command)
       _, err := exec.LookPath(command)
       cmd = exec.Command(command, args...)
+      var file *os.File
       if err != nil {
         fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
       }
       if redirectFile != "" {
-        var file *os.File
         file, err = os.Create(redirectFile)
         if err != nil {
           fmt.Printf("Error creating file: %s\n", err)
@@ -91,10 +91,10 @@ func checkCommand(command string, args []string) {
       cmd.Stderr = os.Stderr
     }
 
-    if err := cmd.Run(); err != nil && !isStderr {
-          // fmt.Printf("%s: command not found (2)\n", command)
+    err = cmd.Run()
+    if err != nil && !isStderr {
+      // fmt.Printf("%s: command not found (2)\n", command)
       fmt.Fprintf(os.Stderr, "%v\n", err)
-        
       }
     }
 }
