@@ -150,6 +150,7 @@ func typeCommand(args string, redirect string, _ bool) {
 
 func pwdCommand(_ string, _ string, _ bool) {
   dir, err := os.Getwd()
+  fmt.Printf("dir: %s\n", dir)
   if err != nil {
     fmt.Printf("Error getting current directory: %s\n", err)
     return
