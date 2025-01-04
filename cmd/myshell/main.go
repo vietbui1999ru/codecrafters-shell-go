@@ -126,7 +126,6 @@ func checkCommand(command string, args []string) {
 		}
 	}
 
-	cmd := exec.Command(command, args...)
 
 	var file *os.File
 	if redirectFile != "" {
@@ -146,6 +145,7 @@ func checkCommand(command string, args []string) {
 			os.Stdout = file
 		}
 	}
+	cmd := exec.Command(command, args...)
 
   cmd.Stdout = os.Stdout
   cmd.Stderr = os.Stderr
