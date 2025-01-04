@@ -39,71 +39,6 @@ func init() {
   // commands[">"] = redirectCommand
 }
 
-func checkCommandArchive(command string, args []string) {
-  // fmt.Printf("command: %s\n", command)
-  // fmt.Printf("args: %s\n", args)
-
-    var redirectFile string
-    // check if the command is a system command 
-    var isStderr bool
-    for index, arg := range args {
-      if arg == redirect || arg == redirectOne || arg == redirectTwo {
-        // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
-        if arg == redirectTwo {
-          isStderr = true
-        }
-        if index+1 < len(args) {
-          redirectFile = args[index+1] 
-          args = args[:index]
-          break
-        } else {
-          fmt.Printf("Error, no file to redirect to\n")
-          return
-        }
-      }
-    }
-    if cmd, ok := commands[command]; ok {
-      cmd(strings.Join(args, " "), redirectFile, isStderr) // execute the command
-      return
-    } else {
-
-      var cmd *exec.Cmd
-      // fmt.Printf("command: %s\n", command)
-      _, err := exec.LookPath(command)
-      cmd = exec.Command(command, args...)
-      var file *os.File
-      if err != nil {
-        fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
-      }
-      if redirectFile != "" {
-        file, err = os.Create(redirectFile)
-        // log.Printf("file: %v\n", file)
-        // log.Printf("redirectFile: %v\n", redirectFile)
-        if err != nil {
-          fmt.Printf("Error creating file: %s\n", err)
-          return
-        }
-        defer file.Close()
-      if isStderr {
-        cmd.Stderr = file
-      } else {
-        cmd.Stdout = file 
-      }
-    } else {
-      cmd.Stdout = os.Stdout
-
-      cmd.Stderr = io.MultiWriter(os.Stderr)
-    }
-
-    if err := cmd.Run(); err != nil && !isStderr {
-          // fmt.Printf("%s: command not found (2)\n", command)
-      fmt.Fprintf(os.Stderr, "%v\n", err)
-      }
-    // log.Printf("command: %v\n", cmd)
-    // log.Printf("args: %v\n", args)
-    }
-}
-
 func checkCommand(command string, args []string) {
 	var redirectFile string
 	var isStderr bool
@@ -249,7 +184,7 @@ func cdCommand(args string, redirect string, _ bool) {
 
 func main() {
   for {
-    fmt.Fprint(os.Stdout, "$ ",)
+    fmt.Fprint(os.Stdout, "$ ")
 
     // Wait for user input
     input, err := bufio.NewReader(os.Stdin).ReadString('\n')
@@ -261,6 +196,7 @@ func main() {
     }
 
     handleCommands(trimmpedInput)
+    fmt.Fprint(os.Stdout, "$ ")
   }
 }
 
