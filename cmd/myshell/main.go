@@ -148,7 +148,7 @@ func typeCommand(args string, redirect string, _ bool) {
   fmt.Printf("%s: not found\n", args)
 }
 
-func pwdCommand(_ string, redirect string, _ bool) {
+func pwdCommand(_ string, _ string, _ bool) {
   dir, err := os.Getwd()
   if err != nil {
     fmt.Printf("Error getting current directory: %s\n", err)
@@ -174,6 +174,7 @@ func cdCommand(args string, redirect string, _ bool) {
   } else {
     cmd = args
   }
+  fmt.Printf("cmd: %s\n", cmd)
   if err := os.Chdir(cmd); err != nil {
     fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
   }
