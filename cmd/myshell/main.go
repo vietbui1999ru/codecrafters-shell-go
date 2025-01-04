@@ -63,6 +63,11 @@ func checkCommand(command string, args []string) {
 		}
 	}
 
+  // Check if the command is a built-in checkCommand(
+  if cmd, ok := commands[command]; ok {
+    cmd(strings.Join(args, " "), redirectFile, isStderr)
+  }
+
 	var file *os.File
 	if redirectFile != "" {
 		var err error
@@ -215,7 +220,6 @@ func handleCommands(input string) {
   //     return
   //   }
   // }
-  
   checkCommand(cmd, args)
   // test
 }
