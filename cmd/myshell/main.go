@@ -86,7 +86,7 @@ func checkCommand(command string, args []string) {
   cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		if !isStderr {
-			fmt.Fprintln(os.Stderr, err)
+			return // fmt.Fprintln(os.Stderr, err)
 		}
 	}
   os.Stdout = originalStdout
