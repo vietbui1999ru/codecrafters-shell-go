@@ -170,6 +170,7 @@ func exitCommand(args string, redirect string, _ bool) {
 
 
 func echoCommand(args string, redirectFile string, isStderr bool) {
+    var output io.Writer
     if redirectFile != "" {
         // Open or create the file for writing
         file, err := os.Create(redirectFile)
@@ -180,15 +181,18 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 
         if isStderr {
             // Write to stderr and to the file
-            os.Stderr = file
-        }
+            output = io.MultiWriter(os.Stderr, file)
+        } else {
 
         // Write to the file
-        fmt.Fprintln(file, args)
+            output = io.MultiWriter(os.Stdout, file)
+        }
+    } else {
+      output = os.Stdout
     }
 
     // Default behavior: Print to stdout
-    fmt.Println(args)
+    fmt.Fprintln(output, args)
 }
 
 
