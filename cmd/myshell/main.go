@@ -85,14 +85,14 @@ func checkCommand(command string, args []string) {
         }
         defer file.Close()
       if isStderr {
-        cmd.Stderr = io.MultiWriter(os.Stderr, file)
+        cmd.Stderr = file
       } else {
         cmd.Stdout = file 
       }
     } else {
       cmd.Stdout = os.Stdout
 
-      cmd.Stderr = os.Stderr
+      cmd.Stderr = io.MultiWriter(os.Stderr)
     }
 
     if err := cmd.Run(); err != nil && !isStderr {
