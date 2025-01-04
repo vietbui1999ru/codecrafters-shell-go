@@ -76,6 +76,8 @@ func checkCommand(command string, args []string) {
       }
       if redirectFile != "" {
         file, err = os.Create(redirectFile)
+        log.Printf("file: %v\n", file)
+        log.Printf("redirectFile: %v\n", redirectFile)
         if err != nil {
           fmt.Printf("Error creating file: %s\n", err)
           return
@@ -88,6 +90,7 @@ func checkCommand(command string, args []string) {
       }
     } else {
       cmd.Stdout = os.Stdout
+
       cmd.Stderr = os.Stderr
     }
 
@@ -95,6 +98,8 @@ func checkCommand(command string, args []string) {
           // fmt.Printf("%s: command not found (2)\n", command)
       fmt.Fprintf(os.Stderr, "%v\n", err)
       }
+    log.Printf("command: %v\n", cmd)
+    log.Printf("args: %v\n", args)
     }
 }
 
