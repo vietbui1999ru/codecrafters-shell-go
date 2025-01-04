@@ -89,7 +89,6 @@ func checkCommand(command string, args []string) {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}
-  fmt.Print("$ ")
 }
 
 func exitCommand(args string, redirect string, _ bool) {
