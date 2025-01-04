@@ -139,7 +139,7 @@ func checkCommand(command string, args []string) {
 
 		if isStderr {
 			// Redirect stderr to both terminal and file
-			cmd.Stderr = io.MultiWriter(os.Stderr, file)
+			cmd.Stderr = file 
 		} else {
 			// Redirect stdout to both terminal and file
 			cmd.Stdout = io.MultiWriter(os.Stdout, file)
