@@ -41,60 +41,63 @@ func init() {
 func checkCommand(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
   // fmt.Printf("args: %s\n", args)
+
     var redirectFile string
+    // check if the command is a system command 
     var isStderr bool
-
-    // Handle redirection symbols in the arguments
     for index, arg := range args {
-        if arg == ">" || arg == "1>" || arg == "2>" {
-            if arg == "2>" {
-                isStderr = true
-            }
-            if index+1 < len(args) {
-                redirectFile = args[index+1]
-                args = args[:index] // Remove redirection part from arguments
-                break
-            } else {
-                fmt.Println("Error: No file specified for redirection")
-                return
-            }
+      if arg == redirect || arg == redirectOne || arg == redirectTwo {
+        // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+        if arg == redirectTwo {
+          isStderr = true
         }
+        if index+1 < len(args) {
+          redirectFile = args[index+1] 
+          args = args[:index]
+          break
+        } else {
+          fmt.Printf("Error, no file to redirect to\n")
+          return
+        }
+      }
     }
+    if cmd, ok := commands[command]; ok {
+      cmd(strings.Join(args, " "), redirectFile, isStderr) // execute the command
+      return
+    } else {
 
-    // Handle custom commands
-    if cmdFunc, ok := commands[command]; ok {
-        cmdFunc(strings.Join(args, " "), redirectFile, isStderr)
-        return
-    }
-
-    cmd := exec.Command(command, args...)
-    var file *os.File
-    var err error
-
-    if redirectFile != "" {
-        // Redirect stdout or stderr based on the flag
+      var cmd *exec.Cmd
+      // fmt.Printf("command: %s\n", command)
+      _, err := exec.LookPath(command)
+      cmd = exec.Command(command, args...)
+      if err != nil {
+        fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
+      }
+      if redirectFile != "" {
+        var file *os.File
         file, err = os.Create(redirectFile)
         if err != nil {
-            fmt.Printf("Error creating file: %v\n", err)
-            return
+          fmt.Printf("Error creating file: %s\n", err)
+          return
         }
         defer file.Close()
-
-        if isStderr {
-            cmd.Stderr = file
-        } else {
-            cmd.Stdout = file
-        }
+      if isStderr {
+        cmd.Stderr = file
+      } else {
+        cmd.Stdout = file
+      }
     } else {
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
+      cmd.Stdout = os.Stdout
+      cmd.Stderr = os.Stderr
     }
 
-    // Run the command
-    if err := cmd.Run(); err != nil {
-        fmt.Printf("Error running command: %v\n", err)
+    if err := cmd.Run(); err != nil && !isStderr {
+          // fmt.Printf("%s: command not found (2)\n", command)
+      fmt.Fprintf(os.Stderr, "%v\n", err)
+        
+      }
     }
-  }
+}
 
 func exitCommand(args string, redirect string, _ bool) {
   if len(args) == 0 {
@@ -108,40 +111,6 @@ func exitCommand(args string, redirect string, _ bool) {
   os.Exit(number)
 }
 
-// func echoCommand(args string, redirectFile string, isStderr bool) {
-//   var outFile os.File
-//   if redirectFile != "" {
-//     file, err := os.Create(redirectFile)
-//       if err != nil {
-//           if os.IsNotExist(err) {
-//             out, err := os.Create(redirectFile)
-//             outFile = *out
-//             if err != nil {
-//               log.Println(err)
-//             }
-//           } else {
-//               log.Fatal(err)
-//         }
-//       }
-//       
-//       defer file.Close()
-// 
-//       // Write the args to the file
-//       // _, err = file.WriteString(args + "\n")
-//       // os.Stderr.WriteString(args + "\n")
-//       outFile = *file
-//       fmt.Fprintln(outFile, args)
-//       if err != nil {
-//           fmt.Printf("Error writing to file: %v\n", err)
-//       }
-//       return
-//     }
-//   // for _, arg := range args {
-//   //   fmt.Printf("%s", string(arg))
-//   // }
-//   // fmt.Println()
-//   fmt.Printf("%s\n", args)
-// }
 
 func echoCommand(args string, redirectFile string, isStderr bool) {
     if redirectFile != "" {
