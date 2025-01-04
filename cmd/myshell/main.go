@@ -43,6 +43,7 @@ func checkCommand(command string, args []string) {
 	var redirectFile string
 	var isStderr bool
   isStderr = false
+  originalStdout := os.Stdout
 
 	// Handle redirection operators ">" and "2>"
 	for index, arg := range args {
@@ -88,6 +89,7 @@ func checkCommand(command string, args []string) {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}
+  os.Stdout = originalStdout
 }
 
 func exitCommand(args string, redirect string, _ bool) {
