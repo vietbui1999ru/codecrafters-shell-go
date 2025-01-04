@@ -39,7 +39,7 @@ func init() {
   // commands[">"] = redirectCommand
 }
 
-func checkCommand(command string, args []string) {
+func checkCommandArchive(command string, args []string) {
   // fmt.Printf("command: %s\n", command)
   // fmt.Printf("args: %s\n", args)
 
@@ -102,6 +102,58 @@ func checkCommand(command string, args []string) {
     // log.Printf("command: %v\n", cmd)
     // log.Printf("args: %v\n", args)
     }
+}
+
+func checkCommand(command string, args []string) {
+	var redirectFile string
+	var isStderr bool
+
+	// Handle redirection operators ">" and "2>"
+	for index, arg := range args {
+		if arg == ">" || arg == "2>" {
+			if index+1 < len(args) {
+				redirectFile = args[index+1]
+				if arg == "2>" {
+					isStderr = true
+				}
+				args = args[:index]
+				break
+			} else {
+				fmt.Fprintln(os.Stderr, "Error: No file specified for redirection")
+				return
+			}
+		}
+	}
+
+	cmd := exec.Command(command, args...)
+
+	var file *os.File
+	if redirectFile != "" {
+		var err error
+		file, err = os.Create(redirectFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error creating file:", err)
+			return
+		}
+		defer file.Close()
+
+		if isStderr {
+			// Redirect stderr to both terminal and file
+			cmd.Stderr = io.MultiWriter(os.Stderr, file)
+		} else {
+			// Redirect stdout to both terminal and file
+			cmd.Stdout = io.MultiWriter(os.Stdout, file)
+		}
+	} else {
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	}
+
+	if err := cmd.Run(); err != nil {
+		if !isStderr {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	}
 }
 
 func exitCommand(args string, redirect string, _ bool) {
