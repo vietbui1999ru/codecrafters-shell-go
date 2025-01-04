@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -84,9 +85,9 @@ func checkCommand(command string, args []string) {
         }
         defer file.Close()
       if isStderr {
-        cmd.Stderr = file
+        cmd.Stderr = io.MultiWriter(os.Stderr, file)
       } else {
-        cmd.Stdout = file
+        cmd.Stdout = io.MultiWriter(os.Stdout, file)
       }
     } else {
       cmd.Stdout = os.Stdout
