@@ -196,7 +196,6 @@ func main() {
     }
 
     handleCommands(trimmpedInput)
-    fmt.Fprint(os.Stdout, "$ ")
   }
 }
 
