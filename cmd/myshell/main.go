@@ -110,7 +110,7 @@ func checkCommand(command string, args []string) {
 
 	// Handle redirection operators ">" and "2>"
 	for index, arg := range args {
-		if arg == redirect || arg == "redirectOne" || arg == "redirectTwo" {
+		if arg == redirect || arg == redirectOne || arg == redirectTwo {
 			if index+1 < len(args) {
 				redirectFile = args[index+1]
 				if arg == redirectTwo {
