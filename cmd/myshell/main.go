@@ -107,6 +107,7 @@ func checkCommandArchive(command string, args []string) {
 func checkCommand(command string, args []string) {
 	var redirectFile string
 	var isStderr bool
+  isStderr = false
 
 	// Handle redirection operators ">" and "2>"
 	for index, arg := range args {
@@ -135,6 +136,7 @@ func checkCommand(command string, args []string) {
 			fmt.Fprintln(os.Stderr, "Error creating file:", err)
 			return
 		}
+    defer file.Close()
 
 		if isStderr {
 			// Redirect stderr to both terminal and file
@@ -144,7 +146,6 @@ func checkCommand(command string, args []string) {
 			os.Stdout = file
 		}
 	}
-  defer file.Close()
 
   cmd.Stdout = os.Stdout
   cmd.Stderr = os.Stderr
