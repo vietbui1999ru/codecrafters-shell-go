@@ -110,10 +110,10 @@ func checkCommand(command string, args []string) {
 
 	// Handle redirection operators ">" and "2>"
 	for index, arg := range args {
-		if arg == ">" || arg == "2>" {
+		if arg == redirect || arg == "redirectOne" || arg == "redirectTwo" {
 			if index+1 < len(args) {
 				redirectFile = args[index+1]
-				if arg == "2>" {
+				if arg == redirectTwo {
 					isStderr = true
 				}
 				args = args[:index]
@@ -138,17 +138,16 @@ func checkCommand(command string, args []string) {
 
 		if isStderr {
 			// Redirect stderr to both terminal and file
-			cmd.Stderr = file 
+			os.Stderr = file 
 		} else {
 			// Redirect stdout to both terminal and file
-			cmd.Stdout = file
+			os.Stdout = file
 		}
-	} else {
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
 	}
   defer file.Close()
 
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		if !isStderr {
 			fmt.Fprintln(os.Stderr, err)
