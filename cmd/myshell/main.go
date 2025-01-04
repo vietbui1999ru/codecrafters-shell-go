@@ -135,19 +135,19 @@ func checkCommand(command string, args []string) {
 			fmt.Fprintln(os.Stderr, "Error creating file:", err)
 			return
 		}
-		defer file.Close()
 
 		if isStderr {
 			// Redirect stderr to both terminal and file
 			cmd.Stderr = file 
 		} else {
 			// Redirect stdout to both terminal and file
-			cmd.Stdout = io.MultiWriter(os.Stdout, file)
+			cmd.Stdout = file
 		}
 	} else {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 	}
+  defer file.Close()
 
 	if err := cmd.Run(); err != nil {
 		if !isStderr {
