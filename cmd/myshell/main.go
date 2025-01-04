@@ -61,7 +61,6 @@ func checkCommand(command string, args []string) {
 		}
 	}
 
-
 	var file *os.File
 	if redirectFile != "" {
 		var err error
@@ -81,7 +80,7 @@ func checkCommand(command string, args []string) {
 		}
 	}
 	cmd := exec.Command(command, args...)
-
+  cmd.Env = os.Environ()
   cmd.Stdout = os.Stdout
   cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -188,14 +187,14 @@ func main() {
 
     // Wait for user input
     input, err := bufio.NewReader(os.Stdin).ReadString('\n')
-    trimmedInput := strings.TrimSpace(input)
-    if trimmedInput == "" {
-			continue
-		}   // fmt.Printf("%s: command not found\n", trimmpedInput)
-    
     if err != nil {
       fmt.Printf("%s: invalid input\n", input)
     }
+    trimmedInput := strings.TrimSpace(input)
+    if len(trimmedInput) == 0 {
+			continue
+		}   // fmt.Printf("%s: command not found\n", trimmpedInput)
+    
 
     handleCommands(trimmedInput)
   }
