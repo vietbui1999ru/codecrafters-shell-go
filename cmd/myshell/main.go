@@ -44,6 +44,7 @@ func checkCommand(command string, args []string) {
 	var isStderr bool
   isStderr = false
   originalStdout := os.Stdout
+  originalStderr := os.Stderr
 
 	// Handle redirection operators ">" and "2>"
 	for index, arg := range args {
@@ -86,6 +87,7 @@ func checkCommand(command string, args []string) {
   cmd.Stderr = os.Stderr
 	_ = cmd.Run()
   os.Stdout = originalStdout
+  os.Stderr = originalStderr
 }
 
 func exitCommand(args string, redirect string, _ bool) {
