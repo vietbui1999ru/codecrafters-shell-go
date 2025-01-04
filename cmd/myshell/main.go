@@ -171,10 +171,11 @@ func cdCommand(args string, redirect string, _ bool) {
   var cmd string
   if args == tilde {
     cmd, _ = os.UserHomeDir()
+    fmt.Printf("cmd: %s\n", cmd)
   } else {
     cmd = args
+    fmt.Printf("cmd: %s\n", cmd)
   }
-  fmt.Printf("cmd: %s\n", cmd)
   if err := os.Chdir(cmd); err != nil {
     fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
   }
