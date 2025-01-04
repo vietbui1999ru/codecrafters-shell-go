@@ -124,6 +124,7 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
         if isStderr {
             // Write to stderr and to the file
             os.Stderr.WriteString(args + "\n")
+            return
         }
 
         // Write to the file
@@ -132,11 +133,7 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
     }
 
     // Default behavior: Print to stdout
-    if isStderr {
-        fmt.Fprintln(os.Stderr, args)
-    } else {
-        fmt.Println(args)
-    }
+    fmt.Println(args)
 }
 
 
