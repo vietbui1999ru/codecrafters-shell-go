@@ -174,10 +174,10 @@ func cdCommand(args string, redirect string, _ bool) {
   var cmd string
   if args == tilde {
     cmd, _ = os.UserHomeDir()
-    fmt.Printf("cmd: %s\n", cmd)
+    fmt.Printf("cmd (2): %s\n", cmd)
   } else {
     cmd = args
-    fmt.Printf("cmd: %s\n", cmd)
+    fmt.Printf("cmd (3): %s\n", cmd)
   }
   if err := os.Chdir(cmd); err != nil {
     fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", args)
@@ -207,13 +207,14 @@ func main() {
 func handleCommands(input string) {
   
   cmd, args := trimFieldByQuotes(input)[0], trimFieldByQuotes(input)[1:]
-  for _, arg := range args {
-    if arg == redirect || arg == redirectOne {
-      // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
-      checkCommand(cmd, args)
-      return
-    }
-  }
+  // fmt.Printf("cmd (1): %s\n", args)
+  // for _, arg := range args {
+  //   if arg == redirect || arg == redirectOne || arg == redirectTwo {
+  //     // fmt.Printf("%s - %s: we want to redirect here\n", arg, args)
+  //     checkCommand(cmd, args)
+  //     return
+  //   }
+  // }
   
   checkCommand(cmd, args)
   // test
