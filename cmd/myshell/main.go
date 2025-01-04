@@ -83,7 +83,6 @@ func checkCommand(command string, args []string) {
         defer file.Close()
       if isStderr {
         cmd.Stderr = file
-        fmt.Fprintf(os.Stderr, "%v\n", file)
       } else {
         cmd.Stdout = file
       }
