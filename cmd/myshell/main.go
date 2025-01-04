@@ -91,9 +91,8 @@ func checkCommand(command string, args []string) {
       cmd.Stderr = os.Stderr
     }
 
-    err = cmd.Run()
-    if err != nil {
-      // fmt.Printf("%s: command not found (2)\n", command)
+    if err := cmd.Run(); err != nil && !isStderr {
+          // fmt.Printf("%s: command not found (2)\n", command)
       fmt.Fprintf(os.Stderr, "%v\n", err)
       }
     }
