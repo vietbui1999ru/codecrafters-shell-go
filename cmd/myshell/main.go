@@ -123,7 +123,7 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 
         if isStderr {
             // Write to stderr and to the file
-            fmt.Fprintln(os.Stderr, args)
+            os.Stderr.WriteString(args + "\n")
         }
 
         // Write to the file
