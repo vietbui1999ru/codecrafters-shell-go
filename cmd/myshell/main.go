@@ -87,7 +87,7 @@ func checkCommand(command string, args []string) {
       if isStderr {
         cmd.Stderr = io.MultiWriter(os.Stderr, file)
       } else {
-        cmd.Stdout = io.MultiWriter(os.Stdout, file)
+        cmd.Stdout = file 
       }
     } else {
       cmd.Stdout = os.Stdout
