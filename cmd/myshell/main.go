@@ -121,11 +121,11 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 
          if isStderr {
              // Write to stderr and to the file
-             output = io.MultiWriter(os.Stderr, file)
+            os.Stderr = file
+             
          } else {
-
          // Write to the file
-             output = io.MultiWriter(os.Stdout, file)
+            os.Stdout = file
          }
      } else {
        output = os.Stdout
