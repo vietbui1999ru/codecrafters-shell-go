@@ -122,7 +122,9 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 		fmt.Fprintln(multiWriter, args)
 	} else if isStderr {
 		// If isStderr is true, write to stderr
-		fmt.Fprintln(os.Stderr, args)
+		// fmt.Fprintln(os.Stderr, args)
+    return
+
 	} else {
 		// Default behavior: Print to stdout
 		fmt.Fprintln(os.Stdout, args)
