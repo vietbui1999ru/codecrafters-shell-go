@@ -69,7 +69,7 @@ func checkCommand(command string, args []string) {
   }
   _, err := exec.LookPath(command)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: invalid command\n", command)
+		fmt.Fprintf(os.Stderr, "%s: command not found\n", command)
 		return
   }
   if redirectFile != "" {
