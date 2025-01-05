@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+  "io"
 	"os"
   "log"
 	"os/exec"
@@ -108,7 +109,7 @@ func exitCommand(args string, redirect string, _ bool) {
 }
 
 func echoCommand(args string, redirectFile string, isStderr bool) {
-	if redirectFile != "" {
+  if redirectFile != "" {
 		// Open or create the file for writing
 		file, err := os.Create(redirectFile)
 		if err != nil {
@@ -116,16 +117,15 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 		}
 		defer file.Close()
 
-		if isStderr {
-			// Write only to the file for stderr redirection
-			fmt.Fprintln(file, args)
-		} else {
-			// Write only to the file for stdout redirection
-			fmt.Fprintln(file, args)
-		}
+		// Redirect both stdout and stderr to the same file
+		multiWriter := io.MultiWriter(os.Stdout, file)
+		fmt.Fprintln(multiWriter, args)
+	} else if isStderr {
+		// If isStderr is true, write to stderr
+		fmt.Fprintln(os.Stderr, args)
 	} else {
 		// Default behavior: Print to stdout
-		fmt.Println(args)
+		fmt.Fprintln(os.Stdout, args)
 	}
 }
 
