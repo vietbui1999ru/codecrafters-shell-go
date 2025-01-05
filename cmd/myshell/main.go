@@ -24,6 +24,9 @@ var tilde = `~`
 var redirect = `>`
 var redirectOne = `1>`
 var redirectTwo = `2>`
+var appendRedirect = `>>` 
+var appendRedirectOne = `1>>`
+var appendRedirectTwo = `2>>`
 // 
 var commands map[string]func(string, string, bool)
 
@@ -35,7 +38,6 @@ func init() {
   commands["pwd"] = pwdCommand
   commands["cd"] = cdCommand
   commands["~"] = homeCommand
-  // commands[">"] = redirectCommand
 }
 
 func checkCommand(command string, args []string) {
@@ -59,7 +61,19 @@ func checkCommand(command string, args []string) {
 				fmt.Fprintln(os.Stderr, "Error: No file specified for redirection")
 				return
 			}
-		}
+		} else if arg == appendRedirect || arg == appendRedirectOne || arg == appendRedirectTwo {
+      if index+1 < len(args) {
+        redirectFile = args[index+1]
+        if arg == appendRedirectTwo {
+          isStderr = true
+        }
+        args = args[:index]
+        break
+      } else {
+        fmt.Fprintln(os.Stderr, "Error: No file specified for redirection")
+        return
+      }
+    }
 	}
 
   // Check if the command is a built-in checkCommand(
@@ -75,7 +89,7 @@ func checkCommand(command string, args []string) {
   if redirectFile != "" {
       var file *os.File
       var err error
-      file, err = os.Create(redirectFile)
+      file, err = os.OpenFile(redirectFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
       if err != nil {
         fmt.Fprintln(os.Stderr, "Error creating file:", err)
         return
