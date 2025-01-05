@@ -66,8 +66,13 @@ func checkCommand(command string, args []string) {
   if cmd, ok := commands[command]; ok {
     cmd(strings.Join(args, " "), redirectFile, isStderr)
     return
-  } else {
-    if redirectFile != "" {
+  }
+  _, err := exec.LookPath(command)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s: invalid command\n", command)
+		return
+  }
+  if redirectFile != "" {
       var file *os.File
       var err error
       file, err = os.Create(redirectFile)
@@ -89,14 +94,12 @@ func checkCommand(command string, args []string) {
     cmd.Env = os.Environ()
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
-    err := cmd.Run()
+    err = cmd.Run()
     if err != nil {
       fmt.Fprintln(os.Stderr, "Error executing command:", err)
     }
     os.Stdout = originalStdout
     os.Stderr = originalStderr
-
-  }
 }
 
 func exitCommand(args string, redirect string, _ bool) {
