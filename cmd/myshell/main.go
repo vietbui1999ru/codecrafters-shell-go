@@ -66,33 +66,33 @@ func checkCommand(command string, args []string) {
   if cmd, ok := commands[command]; ok {
     cmd(strings.Join(args, " "), redirectFile, isStderr)
     return
+  } else if redirectFile != "" {
+      var file *os.File
+      var err error
+      file, err = os.Create(redirectFile)
+      if err != nil {
+        fmt.Fprintln(os.Stderr, "Error creating file:", err)
+        return
+      }
+      defer file.Close()
+
+      if isStderr {
+        // Redirect stderr to both terminal and file
+        os.Stderr = file 
+      } else {
+        // Redirect stdout to both terminal and file
+        os.Stdout = file
+      }
+      cmd := exec.Command(command, args...)
+      cmd.Env = os.Environ()
+      cmd.Stdout = os.Stdout
+      cmd.Stderr = os.Stderr
+      _ = cmd.Run()
+      os.Stdout = originalStdout
+      os.Stderr = originalStderr
+    } else {
+    fmt.Printf("%s: command not found\n", command)
   }
-
-	var file *os.File
-	if redirectFile != "" {
-		var err error
-		file, err = os.Create(redirectFile)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error creating file:", err)
-			return
-		}
-    defer file.Close()
-
-		if isStderr {
-			// Redirect stderr to both terminal and file
-			os.Stderr = file 
-		} else {
-			// Redirect stdout to both terminal and file
-			os.Stdout = file
-		}
-	}
-	cmd := exec.Command(command, args...)
-  cmd.Env = os.Environ()
-  cmd.Stdout = os.Stdout
-  cmd.Stderr = os.Stderr
-  _ = cmd.Run()
-  os.Stdout = originalStdout
-  os.Stderr = originalStderr
 }
 
 func exitCommand(args string, redirect string, _ bool) {
