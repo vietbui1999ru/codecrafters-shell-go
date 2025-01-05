@@ -94,10 +94,7 @@ func checkCommand(command string, args []string) {
     cmd.Env = os.Environ()
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
-    err = cmd.Run()
-    if err != nil {
-      fmt.Fprintln(os.Stderr, "Error executing command:", err)
-    }
+    _ = cmd.Run()
     os.Stdout = originalStdout
     os.Stderr = originalStderr
 }
