@@ -90,10 +90,7 @@ func checkCommand(command string, args []string) {
   cmd.Env = os.Environ()
   cmd.Stdout = os.Stdout
   cmd.Stderr = os.Stderr
-  err := cmd.Run()
-  if err != nil {
-    fmt.Printf("%s: %s\n", command, err)
-  }
+  _ = cmd.Run()
   os.Stdout = originalStdout
   os.Stderr = originalStderr
 }
