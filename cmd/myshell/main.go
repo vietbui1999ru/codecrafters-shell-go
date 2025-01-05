@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-  "io"
 	"os"
   "log"
 	"os/exec"
@@ -116,19 +115,18 @@ func echoCommand(args string, redirectFile string, isStderr bool) {
 			log.Fatalf("Error creating file: %v\n", err)
 		}
 		defer file.Close()
-
+    if isStderr {
+      // If isStderr is true, write to stderr
+      fmt.Fprintln(os.Stderr, args)
+      return
+      } else {
+      // Default behavior: Print to stdout
+      fmt.Fprintln(file, args)
+    }
+  } else {
+    fmt.Fprintln(os.Stdout, args)
+  }
 		// Redirect both stdout and stderr to the same file
-		multiWriter := io.MultiWriter(os.Stdout, file)
-		fmt.Fprintln(multiWriter, args)
-	} else if isStderr {
-		// If isStderr is true, write to stderr
-		// fmt.Fprintln(os.Stderr, args)
-    return
-
-	} else {
-		// Default behavior: Print to stdout
-		fmt.Fprintln(os.Stdout, args)
-	}
 }
 
 
