@@ -92,7 +92,7 @@ func checkCommand(command string, args []string) {
   cmd.Stderr = os.Stderr
   err := cmd.Run()
   if err != nil {
-    fmt.Fprintf(os.Stderr, "%s: %s\n", command, err)
+    fmt.Printf("%s: %s\n", command, err)
   }
   os.Stdout = originalStdout
   os.Stderr = originalStderr
