@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-  "io"
   "log"
 	"os/exec"
 	"path/filepath"
@@ -108,33 +107,27 @@ func exitCommand(args string, redirect string, _ bool) {
   os.Exit(number)
 }
 
-
 func echoCommand(args string, redirectFile string, isStderr bool) {
-     var output io.Writer
-     if redirectFile != "" {
-         // Open or create the file for writing
-         file, err := os.Create(redirectFile)
-         if err != nil {
-             log.Fatalf("Error creating file: %v\n", err)
-         }
-         defer file.Close()
+	if redirectFile != "" {
+		// Open or create the file for writing
+		file, err := os.Create(redirectFile)
+		if err != nil {
+			log.Fatalf("Error creating file: %v\n", err)
+		}
+		defer file.Close()
 
-         if isStderr {
-             // Write to stderr and to the file
-            os.Stderr = file
-             
-         } else {
-         // Write to the file
-            os.Stdout = file
-         }
-     } else {
-       output = os.Stdout
-     }
-
-    // Default behavior: Print to stdout
-    fmt.Fprintln(output, args)
+		if isStderr {
+			// Write only to the file for stderr redirection
+			fmt.Fprintln(file, args)
+		} else {
+			// Write only to the file for stdout redirection
+			fmt.Fprintln(file, args)
+		}
+	} else {
+		// Default behavior: Print to stdout
+		fmt.Println(args)
+	}
 }
-
 
 
 func typeCommand(args string, redirect string, _ bool) {
