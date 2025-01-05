@@ -66,7 +66,8 @@ func checkCommand(command string, args []string) {
   if cmd, ok := commands[command]; ok {
     cmd(strings.Join(args, " "), redirectFile, isStderr)
     return
-  } else if redirectFile != "" {
+  } else {
+    if redirectFile != "" {
       var file *os.File
       var err error
       file, err = os.Create(redirectFile)
@@ -83,15 +84,18 @@ func checkCommand(command string, args []string) {
         // Redirect stdout to both terminal and file
         os.Stdout = file
       }
-      cmd := exec.Command(command, args...)
-      cmd.Env = os.Environ()
-      cmd.Stdout = os.Stdout
-      cmd.Stderr = os.Stderr
-      _ = cmd.Run()
-      os.Stdout = originalStdout
-      os.Stderr = originalStderr
-    } else {
-    fmt.Printf("%s: command not found\n", command)
+    }
+    cmd := exec.Command(command, args...)
+    cmd.Env = os.Environ()
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+    err := cmd.Run()
+    if err != nil {
+      fmt.Fprintln(os.Stderr, "Error executing command:", err)
+    }
+    os.Stdout = originalStdout
+    os.Stderr = originalStderr
+
   }
 }
 
