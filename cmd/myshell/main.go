@@ -128,7 +128,7 @@ func exitCommand(args string, redirect string, _ bool) {
 func echoCommand(args string, redirectFile string, isStderr bool) {
   if redirectFile != "" {
 		// Open or create the file for writing
-		file, err := os.Create(redirectFile)
+		file, err := os.OpenFile(redirectFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
 			log.Fatalf("Error creating file: %v\n", err)
 		}
